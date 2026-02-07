@@ -1,0 +1,249 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "configure (debug)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/debug",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=Debug",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "configure (release)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/release",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "configure (goldmaster)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/goldmaster",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "configure (goldmaster-pgo-instr)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/goldmaster",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_CXX_PGO=\"pgo-instr\""
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "configure (goldmaster-pgo)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/goldmaster",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_CXX_PGO=\"pgo\""
+			],
+			"dependsOn": [
+				"merge profile data (goldmaster-pgo)"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "configure (goldmaster-ir-pgo-instr)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/goldmaster",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_CXX_PGO=\"ir-pgo-instr\""
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "configure (goldmaster-ir-pgo)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/goldmaster",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_CXX_PGO=\"ir-pgo\""
+			],
+			"dependsOn": [
+				"merge profile data (goldmaster-ir-pgo)"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "configure (goldmaster-csir-pgo-instr)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/goldmaster",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_CXX_PGO=\"csir-pgo-instr\""
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "configure (goldmaster-csir-pgo)",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				".",
+				"-B",
+				"./build/windows/goldmaster",
+				"-G",
+				"Ninja",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DCMAKE_C_COMPILER=clang",
+				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_CXX_PGO=\"csir-pgo\""
+			],
+			"dependsOn": [
+				"merge profile data (goldmaster-csir-pgo)"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "merge profile data (goldmaster-pgo)",
+			"type": "shell",
+			"command": "llvm-profdata",
+			"args": [
+				"merge",
+				"--output=build/windows/goldmaster/pgo/pgo.profdata",
+				"build/windows/goldmaster/pgo/pgo-instr.profraw"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "merge profile data (goldmaster-ir-pgo)",
+			"type": "shell",
+			"command": "llvm-profdata",
+			"args": [
+				"merge",
+				"--output=build/windows/goldmaster/pgo/ir-pgo.profdata",
+				"build/windows/goldmaster/pgo/ir-pgo-instr.profraw"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "merge profile data (goldmaster-csir-pgo)",
+			"type": "shell",
+			"command": "llvm-profdata",
+			"args": [
+				"merge",
+				"--output=build/windows/goldmaster/pgo/csir-pgo.profdata",
+				"build/windows/goldmaster/pgo/ir-pgo.profdata",
+				"build/windows/goldmaster/pgo/csir-pgo-instr.profraw"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "build (debug)",
+			"type": "shell",
+			"command": "ninja",
+			"args": [
+				"-C",
+				"build/windows/debug"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"problemMatcher": "$clang"
+		},
+		{
+			"label": "build (release)",
+			"type": "shell",
+			"command": "ninja",
+			"args": [
+				"-C",
+				"build/windows/release"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": "$clang"
+		},
+		{
+			"label": "build (goldmaster)",
+			"type": "shell",
+			"command": "ninja",
+			"args": [
+				"-C",
+				"build/windows/goldmaster"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"problemMatcher": "$clang"
+		}
+	]
+}
