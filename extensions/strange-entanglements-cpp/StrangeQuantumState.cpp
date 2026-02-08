@@ -4,6 +4,17 @@
 #include <godot_cpp/classes/engine.hpp>
 
 // -----------------------------------------------------------------------------
+// Constants
+// -----------------------------------------------------------------------------
+// Operations
+// -----------------------------------------------------------------------------
+const array<array<float, 2>, 2> StrangeQuantumState::kHadamard =
+{
+	cos(Math_PI / 4),  sin(Math_PI / 4),
+	sin(Math_PI / 4), -cos(Math_PI / 4),
+};
+
+// -----------------------------------------------------------------------------
 // StrangeQuantumState::_bind_methods:
 // -----------------------------------------------------------------------------
 void StrangeQuantumState::_bind_methods()
@@ -49,15 +60,16 @@ void StrangeQuantumState::DoSingleQubitOperation(array<array<float, 2>, 2> const
 	}
 
 	mSuperposition = new_superposition;
+
+	DoErrorCorrection();
 }
 
 // -----------------------------------------------------------------------------
-// StrangeQuantumState::DoHadamard: Apply a Hadamard operation to a given qubit.
+// StrangeQuantumState::DoErrorCorrection: Apply error correction after an
+// operation.
 // -----------------------------------------------------------------------------
-void StrangeQuantumState::DoHadamard(int qubit)
+void StrangeQuantumState::DoErrorCorrection()
 {
-	DoSingleQubitOperation({ { (float)cos(Math_PI / 4),  (float)sin(Math_PI / 4) }, { (float)sin(Math_PI / 4),  -(float)cos(Math_PI / 4) } }, qubit);
-
 	for (int state = 0; state < mSuperposition.size(); ++state)
 	{
 		mSuperposition[state] = (10000.0 * mSuperposition[state]).round() / 10000.0;
@@ -72,3 +84,4 @@ void DoControlledNot(int qubit, int control_qubit, int control_state)
 {
 
 }
+

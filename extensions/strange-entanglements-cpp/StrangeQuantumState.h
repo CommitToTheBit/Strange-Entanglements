@@ -29,6 +29,14 @@ public:
 		Vector2(0.0, 0.0),
 	};
 
+private:
+	// ------------------------------------------------------------------------
+	// Constants
+	// ------------------------------------------------------------------------
+	// Operations
+	// ------------------------------------------------------------------------
+	static const array<array<float, 2>, 2> kHadamard;
+
 public:
 	// ------------------------------------------------------------------------
 	// Godot
@@ -38,10 +46,8 @@ public:
 	// ------------------------------------------------------------------------
 	// Operations
 	// ------------------------------------------------------------------------
-	void DoSingleQubitOperation(array<array<float, 2>, 2> const& operation, int qubit);
+	void DoHadamard(int qubit) { DoSingleQubitOperation(kHadamard, qubit); }
 
-
-	void DoHadamard(int qubit);
 	void DoControlledNot(int qubit, int control_qubit, int control_state);
 
 protected:
@@ -49,6 +55,13 @@ protected:
 	// Godot
 	// ------------------------------------------------------------------------
 	static void _bind_methods();
+
+private:
+	// ------------------------------------------------------------------------
+	// Operations
+	// ------------------------------------------------------------------------
+	void DoSingleQubitOperation(array<array<float, 2>, 2> const& operation, int qubit);
+	void DoErrorCorrection();
 };
 
 #endif // STRANGE_QUANTUM_STATE_H
