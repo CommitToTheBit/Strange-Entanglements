@@ -15,7 +15,8 @@ var screen : Screen = null
 var next_screen : Screen = null
 
 func _ready():
-	play_transition()
+	# play_transition()
+	pass
 
 func _on_transition(index : int):
 	# --------------------------------------------------------------------------
