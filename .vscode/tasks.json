@@ -13,8 +13,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=Debug",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++"
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl"
 			],
 			"problemMatcher": []
 		},
@@ -30,8 +30,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++"
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl"
 			],
 			"problemMatcher": []
 		},
@@ -47,8 +47,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=Release",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++"
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl"
 			],
 			"problemMatcher": []
 		},
@@ -64,8 +64,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=Release",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl",
 				"-DCMAKE_CXX_PGO=\"pgo-instr\""
 			],
 			"problemMatcher": []
@@ -82,8 +82,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=Release",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl",
 				"-DCMAKE_CXX_PGO=\"pgo\""
 			],
 			"dependsOn": [
@@ -103,8 +103,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=Release",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl",
 				"-DCMAKE_CXX_PGO=\"ir-pgo-instr\""
 			],
 			"problemMatcher": []
@@ -121,8 +121,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=Release",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl",
 				"-DCMAKE_CXX_PGO=\"ir-pgo\""
 			],
 			"dependsOn": [
@@ -142,8 +142,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=Release",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl",
 				"-DCMAKE_CXX_PGO=\"csir-pgo-instr\""
 			],
 			"problemMatcher": []
@@ -160,8 +160,8 @@
 				"-G",
 				"Ninja",
 				"-DCMAKE_BUILD_TYPE=Release",
-				"-DCMAKE_C_COMPILER=clang",
-				"-DCMAKE_CXX_COMPILER=clang++",
+				"-DCMAKE_C_COMPILER=clang-cl",
+				"-DCMAKE_CXX_COMPILER=clang-cl",
 				"-DCMAKE_CXX_PGO=\"csir-pgo\""
 			],
 			"dependsOn": [
