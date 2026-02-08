@@ -39,11 +39,16 @@ void StrangeQuantumState::_ready()
 	{
 		UtilityFunctions::print(state);
 	}
+	UtilityFunctions::print("");
+
+	vector<Vector2> complement = GetComplement(1, 3);
+	UtilityFunctions::print("size: ", complement.size());
+
 }
 
 // -----------------------------------------------------------------------------
 // StrangeQuantumState::DoSingleQubitOperation: Apply a single qubit operation
-// to a given qubit.
+// to a target qubit.
 // -----------------------------------------------------------------------------
 void StrangeQuantumState::DoSingleQubitOperation(array<array<Vector2, 2>, 2> const& operation, int qubit)
 {
@@ -68,6 +73,17 @@ void StrangeQuantumState::DoSingleQubitOperation(array<array<Vector2, 2>, 2> con
 }
 
 // -----------------------------------------------------------------------------
+// StrangeQuantumState::DoControlledOperation: Apply a controlled operation to a
+// target qubit.
+// -----------------------------------------------------------------------------
+void StrangeQuantumState::DoControlledOperation(array<array<Vector2, 2>, 2> const& operation, int target_qubit, int control_qubit, int control_state)
+{
+	// -------------------------------------------------------------------------
+	// UNIMPLEMENTED:
+	// -------------------------------------------------------------------------
+}
+
+// -----------------------------------------------------------------------------
 // StrangeQuantumState::DoErrorCorrection: Apply error correction after an
 // operation.
 // -----------------------------------------------------------------------------
@@ -75,16 +91,73 @@ void StrangeQuantumState::DoErrorCorrection()
 {
 	for (int state = 0; state < mSuperposition.size(); ++state)
 	{
-		//mSuperposition[state] = (10000.0 * mSuperposition[state]).round() / 10000.0;
+		mSuperposition[state] = (100000.0 * mSuperposition[state]).round() / 100000.0;
 	}
 }
 
 // -----------------------------------------------------------------------------
-// StrangeQuantumState::DoControlledNot: Apply a controlled not operation to a
-// given qubit.
+// StrangeQuantumState::GetFactorisation:
 // -----------------------------------------------------------------------------
-void DoControlledNot(int qubit, int control_qubit, int control_state)
+void StrangeQuantumState::GetFactorisation() const
 {
+	std::set<int> factors = { };
 
+	for (int i = 1; i <= pow(2.0, mQubits); ++i)
+
+	{
+		bool factored_out = false;
+		for (int factor : factors)
+		{
+			if (factored_out = factor & i)
+			{
+				break;
+			}
+		}
+
+		if (!factored_out)
+		{
+			// -----------------------------------------------------------------
+			// UNIMPLEMENTED: Need a helper to read off sections...
+			// -----------------------------------------------------------------
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// UNIMPLEMENTED:
+	// -------------------------------------------------------------------------
 }
 
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::GetComplement:
+// -----------------------------------------------------------------------------
+// FIXME: Very broken right now!!
+// -----------------------------------------------------------------------------
+vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) const
+{
+	vector<Vector2> superposition;
+	superposition.reserve(pow(2.0, mQubits - __popcnt(qubits)));
+
+	for (int state = 0; state < mSuperposition.size(); ++state)
+	{
+		bool skip = false;
+		for (int i = 0, q = qubits, m = measurement; q; ++i, q >>= 1)
+		{
+			if (q & 1)
+			{
+				skip |= state % static_cast<int>(pow(2, i + 1)) / pow(2.0, i) != m & 1;
+				m >>= 1;
+			}
+		}
+
+		if (!skip)
+		{
+			superposition.push_back(mSuperposition[state]);
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// UNIMPLEMENTED: Normalise!
+	// -------------------------------------------------------------------------
+
+	return superposition;
+}

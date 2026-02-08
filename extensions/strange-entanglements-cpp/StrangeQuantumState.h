@@ -4,6 +4,7 @@
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
+#include <set>
 #include <vector>
 
 using namespace std;
@@ -48,7 +49,10 @@ public:
 	// ------------------------------------------------------------------------
 	void DoHadamard(int qubit) { DoSingleQubitOperation(kHadamard, qubit); }
 
-	void DoControlledNot(int qubit, int control_qubit, int control_state);
+	// ------------------------------------------------------------------------
+	// Representation
+	// ------------------------------------------------------------------------
+	void GetFactorisation() const;
 
 protected:
 	// ------------------------------------------------------------------------
@@ -61,7 +65,20 @@ private:
 	// Operations
 	// ------------------------------------------------------------------------
 	void DoSingleQubitOperation(array<array<Vector2, 2>, 2> const& operation, int qubit);
+	void DoControlledOperation(array<array<Vector2, 2>, 2> const& operation, int target_qubit, int control_qubit, int control_state);
 	void DoErrorCorrection();
+
+	// ------------------------------------------------------------------------
+	// Representation
+	// ------------------------------------------------------------------------
+	vector<Vector2> GetComplement(int qubits, int measurement) const;
+
+	// ------------------------------------------------------------------------
+	// Accessors
+	// ------------------------------------------------------------------------
+	// Vector2 GetLengthOfBasisVector()
+	// ------------------------------------------------------------------------
+	bool GetBitInBasis(int qubit, int basis) { return (1 << qubit) && basis; }
 };
 
 #endif // STRANGE_QUANTUM_STATE_H
