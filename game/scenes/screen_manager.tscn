@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://b7synayyfd7an"]
+
+[ext_resource type="Script" uid="uid://chq5xvpwkx4sb" path="res://scenes/screen_manager.gd" id="1_wgkaw"]
+
+[node name="ScreenManager" type="Node" unique_id=329834432]
+script = ExtResource("1_wgkaw")
+
+[node name="QuantumState" type="StrangeQuantumState" parent="." unique_id=544887985]

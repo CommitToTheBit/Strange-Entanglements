@@ -6,6 +6,8 @@
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
+#include "StrangeQuantumState.h"
+
 // ----------------------------------------------------------------------------
 // InitialiseModule: Register all classes here
 // ----------------------------------------------------------------------------
@@ -19,6 +21,7 @@ void InitialiseModule(godot::ModuleInitializationLevel p_level)
 	// ------------------------------------------------------------------------
 	// Classes
 	// ------------------------------------------------------------------------
+	godot::ClassDB::register_class<StrangeQuantumState>();
 }
 
 // ----------------------------------------------------------------------------
