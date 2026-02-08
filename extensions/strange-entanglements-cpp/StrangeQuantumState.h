@@ -35,7 +35,7 @@ private:
 	// ------------------------------------------------------------------------
 	// Operations
 	// ------------------------------------------------------------------------
-	static const array<array<float, 2>, 2> kHadamard;
+	static const array<array<Vector2, 2>, 2> kHadamard;
 
 public:
 	// ------------------------------------------------------------------------
@@ -60,7 +60,7 @@ private:
 	// ------------------------------------------------------------------------
 	// Operations
 	// ------------------------------------------------------------------------
-	void DoSingleQubitOperation(array<array<float, 2>, 2> const& operation, int qubit);
+	void DoSingleQubitOperation(array<array<Vector2, 2>, 2> const& operation, int qubit);
 	void DoErrorCorrection();
 };
 

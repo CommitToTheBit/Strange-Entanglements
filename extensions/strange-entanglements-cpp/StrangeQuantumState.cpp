@@ -8,10 +8,10 @@
 // -----------------------------------------------------------------------------
 // Operations
 // -----------------------------------------------------------------------------
-const array<array<float, 2>, 2> StrangeQuantumState::kHadamard =
+const array<array<Vector2, 2>, 2> StrangeQuantumState::kHadamard =
 {
-	cos(Math_PI / 4),  sin(Math_PI / 4),
-	sin(Math_PI / 4), -cos(Math_PI / 4),
+	Vector2(cos(Math_PI / 4), 0.0),  Vector2( sin(Math_PI / 4), 0.0),
+	Vector2(sin(Math_PI / 4), 0.0),  Vector2(-cos(Math_PI / 4), 0.0),
 };
 
 // -----------------------------------------------------------------------------
@@ -45,17 +45,20 @@ void StrangeQuantumState::_ready()
 // StrangeQuantumState::DoSingleQubitOperation: Apply a single qubit operation
 // to a given qubit.
 // -----------------------------------------------------------------------------
-void StrangeQuantumState::DoSingleQubitOperation(array<array<float, 2>, 2> const& operation, int qubit)
+void StrangeQuantumState::DoSingleQubitOperation(array<array<Vector2, 2>, 2> const& operation, int qubit)
 {
 	vector<Vector2> new_superposition = vector<Vector2>(mSuperposition.size());
 
 	int bit = 1 << qubit;
 	for (int state = 0; state < mSuperposition.size(); ++state)
 	{
-		int row = state & bit;
-		for (int i = 0; i < 2; ++i)
+		if (mSuperposition[state].length())
 		{
-			new_superposition[state ^ row + i * bit] += operation[row][i] * mSuperposition[state];
+			int row = state & bit;
+			for (int i = 0; i < 2; ++i)
+			{
+				new_superposition[state ^ row + i * bit] += operation[row][i].length() * mSuperposition[state].rotated(operation[row][i].angle());
+			}
 		}
 	}
 
@@ -72,7 +75,7 @@ void StrangeQuantumState::DoErrorCorrection()
 {
 	for (int state = 0; state < mSuperposition.size(); ++state)
 	{
-		mSuperposition[state] = (10000.0 * mSuperposition[state]).round() / 10000.0;
+		//mSuperposition[state] = (10000.0 * mSuperposition[state]).round() / 10000.0;
 	}
 }
 
