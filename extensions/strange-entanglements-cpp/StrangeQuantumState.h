@@ -76,9 +76,8 @@ private:
 	// ------------------------------------------------------------------------
 	// Accessors
 	// ------------------------------------------------------------------------
-	// Vector2 GetLengthOfBasisVector()
-	// ------------------------------------------------------------------------
-	bool GetBitInBasis(int qubit, int basis) { return (1 << qubit) && basis; }
+	int GetQubitRepresentation(int qubit) { return 1 << qubit; }
+	int GetBitInStateRepresentation(int state_representation, int qubit) { return (state_representation & 1 << qubit) >> qubit; }
 };
 
 #endif // STRANGE_QUANTUM_STATE_H

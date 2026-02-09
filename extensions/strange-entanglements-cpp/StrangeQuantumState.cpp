@@ -35,9 +35,9 @@ void StrangeQuantumState::_ready()
 	DoHadamard(0);
 	DoHadamard(1);
 
-	for (Vector2 state : mSuperposition)
+	for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 	{
-		UtilityFunctions::print(state);
+		UtilityFunctions::print(mSuperposition[state_representation]);
 	}
 	UtilityFunctions::print("");
 
@@ -55,14 +55,14 @@ void StrangeQuantumState::DoSingleQubitOperation(array<array<Vector2, 2>, 2> con
 	vector<Vector2> new_superposition = vector<Vector2>(mSuperposition.size());
 
 	int bit = 1 << qubit;
-	for (int state = 0; state < mSuperposition.size(); ++state)
+	for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 	{
-		if (mSuperposition[state].length())
+		if (mSuperposition[state_representation].length())
 		{
-			int row = state & bit;
+			int row = state_representation & bit;
 			for (int i = 0; i < 2; ++i)
 			{
-				new_superposition[state ^ row + i * bit] += operation[row][i].length() * mSuperposition[state].rotated(operation[row][i].angle());
+				new_superposition[state_representation ^ row + i * bit] += operation[row][i].length() * mSuperposition[state_representation].rotated(operation[row][i].angle());
 			}
 		}
 	}
@@ -89,9 +89,9 @@ void StrangeQuantumState::DoControlledOperation(array<array<Vector2, 2>, 2> cons
 // -----------------------------------------------------------------------------
 void StrangeQuantumState::DoErrorCorrection()
 {
-	for (int state = 0; state < mSuperposition.size(); ++state)
+	for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 	{
-		mSuperposition[state] = (100000.0 * mSuperposition[state]).round() / 100000.0;
+		mSuperposition[state_representation] = (100000.0 * mSuperposition[state_representation]).round() / 100000.0;
 	}
 }
 
@@ -103,7 +103,6 @@ void StrangeQuantumState::GetFactorisation() const
 	std::set<int> factors = { };
 
 	for (int i = 1; i <= pow(2.0, mQubits); ++i)
-
 	{
 		bool factored_out = false;
 		for (int factor : factors)
@@ -137,21 +136,21 @@ vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) 
 	vector<Vector2> superposition;
 	superposition.reserve(pow(2.0, mQubits - __popcnt(qubits)));
 
-	for (int state = 0; state < mSuperposition.size(); ++state)
+	for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 	{
 		bool skip = false;
 		for (int i = 0, q = qubits, m = measurement; q; ++i, q >>= 1)
 		{
 			if (q & 1)
 			{
-				skip |= state % static_cast<int>(pow(2, i + 1)) / pow(2.0, i) != m & 1;
+				skip |= state_representation % static_cast<int>(pow(2, i + 1)) / pow(2.0, i) != m & 1;
 				m >>= 1;
 			}
 		}
 
 		if (!skip)
 		{
-			superposition.push_back(mSuperposition[state]);
+			superposition.push_back(mSuperposition[state_representation]);
 		}
 	}
 
