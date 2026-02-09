@@ -76,8 +76,8 @@ private:
 	// ------------------------------------------------------------------------
 	// Accessors
 	// ------------------------------------------------------------------------
-	int GetQubitRepresentation(int qubit) { return 1 << qubit; }
-	int GetBitInStateRepresentation(int state_representation, int qubit) { return (state_representation & 1 << qubit) >> qubit; }
+	int GetQubitRepresentation(int qubit) const { return 1 << qubit; }
+	int GetBitInStateRepresentation(int state_representation, int qubit) const { return (state_representation & 1 << qubit) >> qubit; }
 };
 
 #endif // STRANGE_QUANTUM_STATE_H

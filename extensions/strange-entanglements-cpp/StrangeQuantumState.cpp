@@ -32,18 +32,45 @@ void StrangeQuantumState::_ready()
 	// -------------------------------------------------------------------------
 	// DEBUG:
 	// -------------------------------------------------------------------------
-	DoHadamard(0);
-	DoHadamard(1);
-
-	for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 	{
-		UtilityFunctions::print(mSuperposition[state_representation]);
+		DoHadamard(0);
+
+		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
+		{
+			UtilityFunctions::print(mSuperposition[state_representation]);
+		}
+		UtilityFunctions::print("");
 	}
-	UtilityFunctions::print("");
 
-	vector<Vector2> complement = GetComplement(1, 3);
-	UtilityFunctions::print("size: ", complement.size());
+	{
+		vector<Vector2> complement = GetComplement(1, 0);
 
+		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
+		{
+			UtilityFunctions::print(complement[state_representation]);
+		}
+		UtilityFunctions::print("");
+	}
+
+	{
+		DoHadamard(1);
+
+		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
+		{
+			UtilityFunctions::print(mSuperposition[state_representation]);
+		}
+		UtilityFunctions::print("");
+	}
+
+	{
+		vector<Vector2> complement = GetComplement(1, 0);
+
+		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
+		{
+			UtilityFunctions::print(complement[state_representation]);
+		}
+		UtilityFunctions::print("");
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -136,6 +163,7 @@ vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) 
 	vector<Vector2> superposition;
 	superposition.reserve(pow(2.0, mQubits - __popcnt(qubits)));
 
+	double magnitude = 0.0;
 	for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 	{
 		bool skip = false;
@@ -143,7 +171,7 @@ vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) 
 		{
 			if (q & 1)
 			{
-				skip |= state_representation % static_cast<int>(pow(2, i + 1)) / pow(2.0, i) != m & 1;
+				skip |= GetBitInStateRepresentation(state_representation, i) != (m & 1);
 				m >>= 1;
 			}
 		}
@@ -151,12 +179,15 @@ vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) 
 		if (!skip)
 		{
 			superposition.push_back(mSuperposition[state_representation]);
+			magnitude += mSuperposition[state_representation].length_squared();
 		}
 	}
 
-	// -------------------------------------------------------------------------
-	// UNIMPLEMENTED: Normalise!
-	// -------------------------------------------------------------------------
+	magnitude = sqrt(magnitude);
+	for (int state_representation = 0; state_representation < superposition.size(); ++state_representation)
+	{
+		superposition[state_representation] /= magnitude;
+	}
 
 	return superposition;
 }
