@@ -27,7 +27,7 @@ public:
 		Vector2(1.0, 0.0),
 		Vector2(0.0, 0.0),
 		Vector2(0.0, 0.0),
-		Vector2(0.0, 0.0),
+		Vector2(1.0, 0.0),
 	};
 
 private:

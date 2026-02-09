@@ -33,12 +33,13 @@ void StrangeQuantumState::_ready()
 	// DEBUG:
 	// -------------------------------------------------------------------------
 	{
-		DoHadamard(0);
-
 		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 		{
 			UtilityFunctions::print(mSuperposition[state_representation]);
 		}
+		UtilityFunctions::print("");
+
+		GetFactorisation();
 		UtilityFunctions::print("");
 	}
 
@@ -52,13 +53,39 @@ void StrangeQuantumState::_ready()
 		UtilityFunctions::print("");
 	}
 
-	{
-		DoHadamard(1);
+	DoHadamard(0);
 
+	{
 		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 		{
 			UtilityFunctions::print(mSuperposition[state_representation]);
 		}
+		UtilityFunctions::print("");
+
+		GetFactorisation();
+		UtilityFunctions::print("");
+	}
+
+	{
+		vector<Vector2> complement = GetComplement(1, 0);
+
+		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
+		{
+			UtilityFunctions::print(complement[state_representation]);
+		}
+		UtilityFunctions::print("");
+	}
+
+	DoHadamard(1);
+
+	{
+		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
+		{
+			UtilityFunctions::print(mSuperposition[state_representation]);
+		}
+		UtilityFunctions::print("");
+
+		GetFactorisation();
 		UtilityFunctions::print("");
 	}
 
@@ -129,7 +156,7 @@ void StrangeQuantumState::GetFactorisation() const
 {
 	std::set<int> factors = { };
 
-	for (int i = 1; i <= pow(2.0, mQubits); ++i)
+	for (int i = 1; i < 1 << mQubits; ++i)
 	{
 		bool factored_out = false;
 		for (int factor : factors)
@@ -140,11 +167,31 @@ void StrangeQuantumState::GetFactorisation() const
 			}
 		}
 
-		if (!factored_out)
+		bool is_factor = !factored_out;
+		if (is_factor)
 		{
+			int measurements = 1 << __popcnt(i);
+			vector<Vector2> complement = GetComplement(i, 0);
+			vector<Vector2> zeroes = vector<Vector2>(complement.size());
+			for (int measurement = 1; measurement < measurements; ++measurement)
+			{
+				vector<Vector2> other = GetComplement(i, measurement);
+				if (other != complement && other != zeroes)
+				{
+					is_factor = false;
+					break;
+				}
+			}
+		}
+
+		if (is_factor)
+		{
+			factors.emplace(i);
+
 			// -----------------------------------------------------------------
-			// UNIMPLEMENTED: Need a helper to read off sections...
+			// DEBUG:
 			// -----------------------------------------------------------------
+			UtilityFunctions::print("factor: ", i, "!");
 		}
 	}
 
@@ -183,10 +230,12 @@ vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) 
 		}
 	}
 
-	magnitude = sqrt(magnitude);
-	for (int state_representation = 0; state_representation < superposition.size(); ++state_representation)
+	if (magnitude = sqrt(magnitude))
 	{
-		superposition[state_representation] /= magnitude;
+		for (int state_representation = 0; state_representation < superposition.size(); ++state_representation)
+		{
+			superposition[state_representation] /= magnitude;
+		}
 	}
 
 	return superposition;
