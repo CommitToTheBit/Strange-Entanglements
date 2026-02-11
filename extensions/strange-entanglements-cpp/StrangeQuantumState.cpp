@@ -35,7 +35,7 @@ void StrangeQuantumState::_ready()
 	{
 		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 		{
-			UtilityFunctions::print(mSuperposition[state_representation]);
+			UtilityFunctions::print(GetState(state_representation).c_str(), ": ", mSuperposition[state_representation]);
 		}
 		UtilityFunctions::print("");
 
@@ -48,7 +48,7 @@ void StrangeQuantumState::_ready()
 
 		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
 		{
-			UtilityFunctions::print(complement[state_representation]);
+			UtilityFunctions::print(GetState(mQubits - 1, state_representation).c_str(), ": ", complement[state_representation]);
 		}
 		UtilityFunctions::print("");
 	}
@@ -58,7 +58,7 @@ void StrangeQuantumState::_ready()
 	{
 		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 		{
-			UtilityFunctions::print(mSuperposition[state_representation]);
+			UtilityFunctions::print(GetState(state_representation).c_str(), ": ", mSuperposition[state_representation]);
 		}
 		UtilityFunctions::print("");
 
@@ -71,7 +71,7 @@ void StrangeQuantumState::_ready()
 
 		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
 		{
-			UtilityFunctions::print(complement[state_representation]);
+			UtilityFunctions::print(GetState(mQubits - 1, state_representation).c_str(), ": ", complement[state_representation]);
 		}
 		UtilityFunctions::print("");
 	}
@@ -81,7 +81,7 @@ void StrangeQuantumState::_ready()
 	{
 		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 		{
-			UtilityFunctions::print(mSuperposition[state_representation]);
+			UtilityFunctions::print(GetState(state_representation).c_str(), ": ", mSuperposition[state_representation]);
 		}
 		UtilityFunctions::print("");
 
@@ -94,7 +94,7 @@ void StrangeQuantumState::_ready()
 
 		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
 		{
-			UtilityFunctions::print(complement[state_representation]);
+			UtilityFunctions::print(GetState(mQubits - 1, state_representation).c_str(), ": ", complement[state_representation]);
 		}
 		UtilityFunctions::print("");
 	}
@@ -108,15 +108,17 @@ void StrangeQuantumState::DoSingleQubitOperation(array<array<Vector2, 2>, 2> con
 {
 	vector<Vector2> new_superposition = vector<Vector2>(mSuperposition.size());
 
-	int bit = 1 << qubit;
+	int qubit_representation = GetQubitRepresentation(qubit);
 	for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
 	{
 		if (mSuperposition[state_representation].length())
 		{
-			int row = state_representation & bit;
+			int substate_representation = (state_representation | qubit_representation) ^ qubit_representation;
+			int row = bool{state_representation & qubit_representation}; 
 			for (int i = 0; i < 2; ++i)
 			{
-				new_superposition[state_representation ^ row + i * bit] += operation[row][i].length() * mSuperposition[state_representation].rotated(operation[row][i].angle());
+				int index = substate_representation + i * qubit_representation;
+				new_superposition[index] += operation[row][i].length() * mSuperposition[state_representation].rotated(operation[row][i].angle());
 			}
 		}
 	}
@@ -239,4 +241,26 @@ vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) 
 	}
 
 	return superposition;
+}
+
+// ----------------------------------------------------------------------------
+// StrangeQuantumState::GetState: Read state representation as (binary) state.
+// ----------------------------------------------------------------------------
+string StrangeQuantumState::GetState(int qubits, int state_representation)
+{
+	if (qubits)
+	{
+		string state = string{ };
+		for (int i = 0; i < qubits; ++i)
+		{
+			state.append(std::to_string(state_representation & 1));
+			state_representation >>= 1;
+		}
+
+		return state;
+	}
+	else
+	{
+		return "∅";
+	}
 }

@@ -5,6 +5,7 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include <set>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -24,10 +25,10 @@ public:
 	int mQubits = 2;
 	vector<Vector2> mSuperposition =
 	{
+		Vector2(0.0, 0.0),
 		Vector2(1.0, 0.0),
 		Vector2(0.0, 0.0),
 		Vector2(0.0, 0.0),
-		Vector2(1.0, 0.0),
 	};
 
 private:
@@ -73,11 +74,11 @@ private:
 	// ------------------------------------------------------------------------
 	vector<Vector2> GetComplement(int qubits, int measurement) const;
 
-	// ------------------------------------------------------------------------
-	// Accessors
-	// ------------------------------------------------------------------------
 	int GetQubitRepresentation(int qubit) const { return 1 << qubit; }
 	int GetBitInStateRepresentation(int state_representation, int qubit) const { return (state_representation & 1 << qubit) >> qubit; }
+
+	static string GetState(int qubits, int state_representation);
+ 	string GetState(int state_representation) { return GetState(mQubits, state_representation); }
 };
 
 #endif // STRANGE_QUANTUM_STATE_H
