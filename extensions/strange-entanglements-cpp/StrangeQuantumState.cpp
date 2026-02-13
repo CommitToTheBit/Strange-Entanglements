@@ -19,7 +19,12 @@ const array<array<Vector2, 2>, 2> StrangeQuantumState::kHadamard =
 // -----------------------------------------------------------------------------
 void StrangeQuantumState::_bind_methods()
 {
+	ClassDB::bind_method(D_METHOD("initialise"), &StrangeQuantumState::Initialise);
+
 	ClassDB::bind_method(D_METHOD("do_hadamard"), &StrangeQuantumState::DoHadamard);
+
+	ClassDB::bind_method(D_METHOD("get_qubits"), &StrangeQuantumState::GetQubits);
+	ClassDB::bind_method(D_METHOD("get_factorisation"), &StrangeQuantumState::GetFactorisation);
 }
 
 // -----------------------------------------------------------------------------
@@ -28,76 +33,16 @@ void StrangeQuantumState::_bind_methods()
 void StrangeQuantumState::_ready()
 {
 	Node::_ready();
+}
 
-	// -------------------------------------------------------------------------
-	// DEBUG:
-	// -------------------------------------------------------------------------
-	{
-		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
-		{
-			UtilityFunctions::print(GetState(state_representation).c_str(), ": ", mSuperposition[state_representation]);
-		}
-		UtilityFunctions::print("");
-
-		GetFactorisation();
-		UtilityFunctions::print("");
-	}
-
-	{
-		vector<Vector2> complement = GetComplement(1, 0);
-
-		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
-		{
-			UtilityFunctions::print(GetState(mQubits - 1, state_representation).c_str(), ": ", complement[state_representation]);
-		}
-		UtilityFunctions::print("");
-	}
-
-	DoHadamard(0);
-
-	{
-		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
-		{
-			UtilityFunctions::print(GetState(state_representation).c_str(), ": ", mSuperposition[state_representation]);
-		}
-		UtilityFunctions::print("");
-
-		GetFactorisation();
-		UtilityFunctions::print("");
-	}
-
-	{
-		vector<Vector2> complement = GetComplement(1, 0);
-
-		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
-		{
-			UtilityFunctions::print(GetState(mQubits - 1, state_representation).c_str(), ": ", complement[state_representation]);
-		}
-		UtilityFunctions::print("");
-	}
-
-	DoHadamard(1);
-
-	{
-		for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
-		{
-			UtilityFunctions::print(GetState(state_representation).c_str(), ": ", mSuperposition[state_representation]);
-		}
-		UtilityFunctions::print("");
-
-		GetFactorisation();
-		UtilityFunctions::print("");
-	}
-
-	{
-		vector<Vector2> complement = GetComplement(1, 0);
-
-		for (int state_representation = 0; state_representation < complement.size(); ++state_representation)
-		{
-			UtilityFunctions::print(GetState(mQubits - 1, state_representation).c_str(), ": ", complement[state_representation]);
-		}
-		UtilityFunctions::print("");
-	}
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::Initialise: Initialise quantum state with a fixed number
+// of qubits.
+// -----------------------------------------------------------------------------
+void StrangeQuantumState::Initialise(int qubits)
+{
+	mQubits = qubits;
+	mSuperposition = vector<Vector2>(1 << mQubits);
 }
 
 // -----------------------------------------------------------------------------
@@ -154,16 +99,16 @@ void StrangeQuantumState::DoErrorCorrection(vector<Vector2>& superposition) cons
 // -----------------------------------------------------------------------------
 // StrangeQuantumState::GetFactorisation:
 // -----------------------------------------------------------------------------
-void StrangeQuantumState::GetFactorisation() const
+Array StrangeQuantumState::GetFactorisation() const
 {
 	std::set<int> factors = { };
 
-	for (int i = 1; i < 1 << mQubits; ++i)
+	for (int qubits = 1; qubits < 1 << mQubits; ++qubits)
 	{
 		bool factored_out = false;
 		for (int factor : factors)
 		{
-			if (factored_out = factor & i)
+			if (factored_out = factor & qubits)
 			{
 				break;
 			}
@@ -172,19 +117,19 @@ void StrangeQuantumState::GetFactorisation() const
 		bool is_factor = !factored_out;
 		if (is_factor)
 		{
-			int measurements = 1 << __popcnt(i);
-			vector<Vector2> complement = GetComplement(i, 0);
+			int measurements = 1 << __popcnt(qubits);
+			vector<Vector2> complement = GetComplement(qubits, 0);
 			vector<Vector2> zeroes = vector<Vector2>(complement.size());
 
 			for (int measurement = 1; measurement < measurements; ++measurement)
 			{
 				if (complement == zeroes)
 				{
-					complement = GetComplement(i, measurement);
+					complement = GetComplement(qubits, measurement);
 				}
 				else
 				{
-					vector<Vector2> other = GetComplement(i, measurement);
+					vector<Vector2> other = GetComplement(qubits, measurement);
 					if (other != complement && other != zeroes)
 					{
 						is_factor = false;
@@ -196,18 +141,28 @@ void StrangeQuantumState::GetFactorisation() const
 
 		if (is_factor)
 		{
-			factors.emplace(i);
-
-			// -----------------------------------------------------------------
-			// DEBUG:
-			// -----------------------------------------------------------------
-			UtilityFunctions::print("factor: ", i, "!");
+			factors.emplace(qubits);
 		}
 	}
 
-	// -------------------------------------------------------------------------
-	// UNIMPLEMENTED:
-	// -------------------------------------------------------------------------
+	Array gdFactors;
+	for (auto iter = factors.begin(); iter != factors.end(); ++iter)
+	{
+		Array gdFactor;
+
+		int qubit = 0;
+		for (int factor = *iter; factor; factor >>= 1, ++qubit)
+		{
+			if (factor & 1)
+			{
+				gdFactor.push_front(qubit);
+			}
+		}
+
+		gdFactors.push_back(gdFactor);
+	}
+
+	return gdFactors;
 }
 
 // -----------------------------------------------------------------------------

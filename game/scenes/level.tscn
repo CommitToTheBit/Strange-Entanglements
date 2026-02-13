@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dng6pmxqna4ct"]
+
+[ext_resource type="Script" uid="uid://c8wqxrhmv45ja" path="res://scenes/level.gd" id="1_2q6dc"]
+[ext_resource type="PackedScene" uid="uid://cmfk6iyp2j4bg" path="res://scenes/qubit.tscn" id="2_w7c3h"]
+
+[node name="Level" type="TileMapLayer" unique_id=1992086194]
+script = ExtResource("1_2q6dc")
+
+[node name="QuantumState" type="StrangeQuantumState" parent="." unique_id=1755032662]
+
+[node name="Qubit" parent="." unique_id=970844913 instance=ExtResource("2_w7c3h")]
+position = Vector2(204, 203)
+
+[node name="Qubit2" parent="." unique_id=611916212 instance=ExtResource("2_w7c3h")]
+position = Vector2(574, 283)
