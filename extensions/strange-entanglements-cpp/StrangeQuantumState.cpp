@@ -19,7 +19,7 @@ const array<array<Vector2, 2>, 2> StrangeQuantumState::kHadamard =
 // -----------------------------------------------------------------------------
 void StrangeQuantumState::_bind_methods()
 {
-	
+	ClassDB::bind_method(D_METHOD("do_hadamard"), &StrangeQuantumState::DoHadamard);
 }
 
 // -----------------------------------------------------------------------------
@@ -143,11 +143,11 @@ void StrangeQuantumState::DoControlledOperation(array<array<Vector2, 2>, 2> cons
 // StrangeQuantumState::DoErrorCorrection: Apply error correction after an
 // operation.
 // -----------------------------------------------------------------------------
-void StrangeQuantumState::DoErrorCorrection()
+void StrangeQuantumState::DoErrorCorrection(vector<Vector2>& superposition) const
 {
-	for (int state_representation = 0; state_representation < mSuperposition.size(); ++state_representation)
+	for (int state_representation = 0; state_representation < superposition.size(); ++state_representation)
 	{
-		mSuperposition[state_representation] = (100000.0 * mSuperposition[state_representation]).round() / 100000.0;
+		superposition[state_representation] = (100000.0 * superposition[state_representation]).round() / 100000.0;
 	}
 }
 
@@ -175,13 +175,21 @@ void StrangeQuantumState::GetFactorisation() const
 			int measurements = 1 << __popcnt(i);
 			vector<Vector2> complement = GetComplement(i, 0);
 			vector<Vector2> zeroes = vector<Vector2>(complement.size());
+
 			for (int measurement = 1; measurement < measurements; ++measurement)
 			{
-				vector<Vector2> other = GetComplement(i, measurement);
-				if (other != complement && other != zeroes)
+				if (complement == zeroes)
 				{
-					is_factor = false;
-					break;
+					complement = GetComplement(i, measurement);
+				}
+				else
+				{
+					vector<Vector2> other = GetComplement(i, measurement);
+					if (other != complement && other != zeroes)
+					{
+						is_factor = false;
+						break;
+					}
 				}
 			}
 		}
@@ -232,13 +240,27 @@ vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) 
 		}
 	}
 
+	bool first_nonzero_element = true;
+	float angle = 0.0;
+
 	if (magnitude = sqrt(magnitude))
 	{
 		for (int state_representation = 0; state_representation < superposition.size(); ++state_representation)
 		{
+			
+
+			if (first_nonzero_element && superposition[state_representation] != Vector2(0.0, 0.0))
+			{
+				angle = superposition[state_representation].angle();
+				first_nonzero_element = false;
+			}
+			
+			superposition[state_representation] = superposition[state_representation].rotated(-angle);
 			superposition[state_representation] /= magnitude;
 		}
 	}
+
+	DoErrorCorrection(superposition);
 
 	return superposition;
 }
@@ -253,7 +275,7 @@ string StrangeQuantumState::GetState(int qubits, int state_representation)
 		string state = string{ };
 		for (int i = 0; i < qubits; ++i)
 		{
-			state.append(std::to_string(state_representation & 1));
+			state = std::to_string(state_representation & 1).append(state);
 			state_representation >>= 1;
 		}
 

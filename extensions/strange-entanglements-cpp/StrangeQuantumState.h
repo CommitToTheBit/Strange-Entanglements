@@ -67,15 +67,17 @@ private:
 	// ------------------------------------------------------------------------
 	void DoSingleQubitOperation(array<array<Vector2, 2>, 2> const& operation, int qubit);
 	void DoControlledOperation(array<array<Vector2, 2>, 2> const& operation, int target_qubit, int control_qubit, int control_state);
-	void DoErrorCorrection();
+
+	void DoErrorCorrection() { DoErrorCorrection(mSuperposition); }
+	void DoErrorCorrection(vector<Vector2>& superposition) const;
 
 	// ------------------------------------------------------------------------
 	// Representation
 	// ------------------------------------------------------------------------
 	vector<Vector2> GetComplement(int qubits, int measurement) const;
 
-	int GetQubitRepresentation(int qubit) const { return 1 << qubit; }
-	int GetBitInStateRepresentation(int state_representation, int qubit) const { return (state_representation & 1 << qubit) >> qubit; }
+	int GetQubitRepresentation(int qubit) const { return 1 << mQubits - qubit - 1; }
+	int GetBitInStateRepresentation(int state_representation, int qubit) const { return (state_representation & 1 << mQubits - qubit - 1) >> mQubits - qubit - 1; }
 
 	static string GetState(int qubits, int state_representation);
  	string GetState(int state_representation) { return GetState(mQubits, state_representation); }
