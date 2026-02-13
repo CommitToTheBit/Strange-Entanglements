@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://2wf85qdmgp03"]
+
+[node name="Floor" type="Line2D" unique_id=1374794593]
+points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+closed = true
+width = 8.0
+default_color = Color(0.5176471, 0.4745098, 0.4745098, 1)
+joint_mode = 2

@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dsilkmw4onje2"]
+
+[ext_resource type="Script" uid="uid://cj7xcf6xilos8" path="res://scenes/you.gd" id="1_0hrdx"]
+
+[node name="You" type="Node2D" unique_id=649580737]
+script = ExtResource("1_0hrdx")
+
+[node name="Boundary" type="Line2D" parent="." unique_id=505984359]
+points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+closed = true
+width = 8.0
+default_color = Color(0.8235294, 0.5294118, 0.7294118, 1)
+joint_mode = 2
