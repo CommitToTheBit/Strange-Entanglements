@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://3ujs5142rdho"]
+
+[ext_resource type="Script" uid="uid://cdmqvu6irbqkj" path="res://qubit_orbit.gd" id="1_1nigt"]
+
+[node name="Orbit" type="Line2D" unique_id=800854702]
+rotation = -2.3561945
+points = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+closed = true
+width = 3.0
+default_color = Color(0.2, 0.7647059, 0.9411765, 0.5019608)
+script = ExtResource("1_1nigt")
+
+[node name="Quark" type="Polygon2D" parent="." unique_id=1240934592]
+color = Color(0.2, 0.7647059, 0.9411765, 1)
+polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+[node name="Spacing" type="Polygon2D" parent="Quark" unique_id=2067199538]
+polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)

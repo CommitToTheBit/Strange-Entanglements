@@ -5,17 +5,12 @@
 [node name="Qubit" type="Node2D" unique_id=970844913]
 script = ExtResource("1_r62k6")
 
-[node name="Boundary" type="Line2D" parent="." unique_id=721631857]
+[node name="Box" type="Line2D" parent="." unique_id=721631857]
+visible = false
 points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 closed = true
 width = 8.0
 default_color = Color(0.2, 0.7647059, 0.9411765, 1)
 joint_mode = 2
 
-[node name="Marker" type="Line2D" parent="." unique_id=708845315]
-position = Vector2(32, 0)
-points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
-closed = true
-width = 8.0
-default_color = Color(0.8235294, 0.5294118, 0.7294118, 1)
-joint_mode = 2
+[node name="Nucleus" type="Polygon2D" parent="." unique_id=824253668]
