@@ -11,14 +11,18 @@ var orbits : int
 
 func _ready():
 	packed_qubit_orbit = load("res://scenes/qubit_orbit.tscn")
+
+func set_orbits(value : int):
+	for qubit_orbit in qubit_orbits:
+		remove_child(qubit_orbit)
 	
-	# --------------------------------------------------------------------------
-	# DEBUG
-	# --------------------------------------------------------------------------
-	for radius in range(8.0, 40.0, 8.0):
+	orbits = value
+	for radius in range(32.0, 0.0, -32.0 / value):
 		var qubit_orbit = packed_qubit_orbit.instantiate()
 		add_child(qubit_orbit)
 		
-		qubit_orbit.rotation += radius * PI / 16.0
 		qubit_orbit.set_radius(radius)
 		qubit_orbits.append(qubit_orbit)
+
+func set_orbit(orbit : int, superposition : PackedVector2Array):
+	qubit_orbits[orbit].rotation = Vector2(superposition[1].x, superposition[0].x).angle();

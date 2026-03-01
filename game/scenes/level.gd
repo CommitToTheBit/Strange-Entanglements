@@ -22,6 +22,20 @@ func _ready():
 	
 	quantum_state = get_node("QuantumState")
 	quantum_state.initialise(qubits.size())
+	
+	var factorisation : Array = quantum_state.get_factorisation()
+	for factor : Array in factorisation:
+		var orbits : int = pow(2, factor.size() - 1)
+		for i in factor:
+			qubits[i].set_orbits(orbits)
+			# ------------------------------------------------------------------
+			# DEBUG: Render single qubit subsystems.
+			# ------------------------------------------------------------------
+			qubits[i].set_orbit(0, quantum_state.get_superposition(pow(2, i)))
+	
+	print(quantum_state.get_factorisation())
+	print(quantum_state.get_superposition(1))
+	print(quantum_state.get_superposition(2))
 
 func _process(_delta):
 	if Input.is_action_just_pressed("ui_left"):

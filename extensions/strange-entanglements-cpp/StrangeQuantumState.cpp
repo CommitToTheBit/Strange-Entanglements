@@ -25,6 +25,7 @@ void StrangeQuantumState::_bind_methods()
 
 	ClassDB::bind_method(D_METHOD("get_qubits"), &StrangeQuantumState::GetQubits);
 	ClassDB::bind_method(D_METHOD("get_factorisation"), &StrangeQuantumState::GetFactorisation);
+	ClassDB::bind_method(D_METHOD("get_superposition"), &StrangeQuantumState::GetSuperpositionAsArray);
 }
 
 // -----------------------------------------------------------------------------
@@ -43,6 +44,7 @@ void StrangeQuantumState::Initialise(int qubits)
 {
 	mQubits = qubits;
 	mSuperposition = vector<Vector2>(1 << mQubits);
+	mSuperposition[1] = Vector2(1.0, 0.0);
 }
 
 // -----------------------------------------------------------------------------
@@ -166,6 +168,40 @@ Array StrangeQuantumState::GetFactorisation() const
 }
 
 // -----------------------------------------------------------------------------
+// StrangeQuantumState::GetSuperpositionAsArray:
+// -----------------------------------------------------------------------------
+PackedVector2Array StrangeQuantumState::GetSuperpositionAsArray(int qubits) const
+{
+	PackedVector2Array gdSuperposition;
+
+	vector<Vector2> superposition = GetSuperposition(qubits);
+	for (int i = 0; i < superposition.size(); ++i)
+	{
+		gdSuperposition.append(superposition[i]);
+	}
+	
+	return gdSuperposition;
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::GetSuperposition:
+// -----------------------------------------------------------------------------
+vector<Vector2> StrangeQuantumState::GetSuperposition(int qubits) const
+{
+	vector<Vector2> superposition = vector<Vector2>(pow(2.0, __popcnt(qubits)));
+	vector<Vector2> zeroes = vector<Vector2>(pow(2.0, __popcnt(qubits)));
+
+	int complement = (1 << mQubits) - 1 ^ qubits;
+	int measurements = pow(2.0, mQubits - __popcnt(qubits));
+	for (int measurement = 0; measurement < measurements && superposition == zeroes; ++measurement)
+	{
+		superposition = GetComplement(complement, measurement);
+	}
+
+	return superposition;
+}
+
+// -----------------------------------------------------------------------------
 // StrangeQuantumState::GetComplement:
 // -----------------------------------------------------------------------------
 // FIXME: Very broken right now!!
@@ -202,8 +238,6 @@ vector<Vector2> StrangeQuantumState::GetComplement(int qubits, int measurement) 
 	{
 		for (int state_representation = 0; state_representation < superposition.size(); ++state_representation)
 		{
-			
-
 			if (first_nonzero_element && superposition[state_representation] != Vector2(0.0, 0.0))
 			{
 				angle = superposition[state_representation].angle();

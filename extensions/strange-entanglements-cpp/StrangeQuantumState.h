@@ -57,6 +57,8 @@ public:
 	// ------------------------------------------------------------------------
 	// Accessors
 	// ------------------------------------------------------------------------
+	PackedVector2Array GetSuperpositionAsArray(int qubits) const;
+
 	int GetQubits() { return mQubits; }
 
 protected:
@@ -78,6 +80,7 @@ private:
 	// ------------------------------------------------------------------------
 	// Representation
 	// ------------------------------------------------------------------------
+	vector<Vector2> GetSuperposition(int qubits) const;
 	vector<Vector2> GetComplement(int qubits, int measurement) const;
 
 	int GetQubitRepresentation(int qubit) const { return 1 << mQubits - qubit - 1; }
