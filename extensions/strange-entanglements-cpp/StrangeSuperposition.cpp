@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 // StrangeSuperposition::StrangeSuperposition: Constructor.
 // -----------------------------------------------------------------------------
-StrangeSuperposition::StrangeSuperposition(int qubits)
+StrangeSuperposition::StrangeSuperposition(size_t qubits)
 	: mQubits(qubits)
 	, mDimensions(1 << qubits)
 {

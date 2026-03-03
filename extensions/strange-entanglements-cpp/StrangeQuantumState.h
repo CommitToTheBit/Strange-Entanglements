@@ -6,6 +6,7 @@
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
+#include <cassert>
 #include <complex>
 #include <memory>
 #include <set>
@@ -45,12 +46,12 @@ public:
 	// ------------------------------------------------------------------------
 	// Initialisation
 	// ------------------------------------------------------------------------
-	void Initialise(int qubits);
+	void Initialise(size_t qubits);
 
 	// ------------------------------------------------------------------------
 	// Accessors
 	// ------------------------------------------------------------------------
-	int GetQubits() { return mSuperposition->mQubits; }
+	size_t GetQubits() { return mSuperposition->mQubits; }
 
 
 protected:

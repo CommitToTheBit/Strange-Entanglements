@@ -7,7 +7,7 @@
 using namespace std;
 
 // -----------------------------------------------------------------------------
-// StrangeSuperposition: 
+// StrangeSuperposition: Struct to hold superposition data.
 // -----------------------------------------------------------------------------
 struct StrangeSuperposition
 {
@@ -23,7 +23,7 @@ public:
 	// -------------------------------------------------------------------------
 	// Constructors/Destructor
 	// -------------------------------------------------------------------------
-	StrangeSuperposition(int qubits);
+	StrangeSuperposition(size_t qubits);
 };
 
 #endif // STRANGE_SUPERPOSITION_H
