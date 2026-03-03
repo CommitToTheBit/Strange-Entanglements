@@ -1,10 +1,13 @@
 #ifndef STRANGE_QUANTUM_STATE_H
 #define STRANGE_QUANTUM_STATE_H
 
+#include "StrangeSuperposition.h"
+
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include <complex>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -23,7 +26,7 @@ public:
 	// ------------------------------------------------------------------------
 	// State
 	// ------------------------------------------------------------------------
-	vector<Vector2> mSuperpositions;
+	unique_ptr<StrangeSuperposition> mSuperposition = nullptr;
 
 private:
 	// ------------------------------------------------------------------------
@@ -31,13 +34,24 @@ private:
 	// ------------------------------------------------------------------------
 	// Operations
 	// ------------------------------------------------------------------------
-	static const array<array<complex<float>, 2>, 2> kHadamard;
+	static const array<array<complex<double>, 2>, 2> kHadamard;
 
 public:
 	// ------------------------------------------------------------------------
 	// Godot
 	// ------------------------------------------------------------------------
 	virtual void _ready() override;
+
+	// ------------------------------------------------------------------------
+	// Initialisation
+	// ------------------------------------------------------------------------
+	void Initialise(int qubits);
+
+	// ------------------------------------------------------------------------
+	// Accessors
+	// ------------------------------------------------------------------------
+	int GetQubits() { return mSuperposition->mQubits; }
+
 
 protected:
 	// ------------------------------------------------------------------------

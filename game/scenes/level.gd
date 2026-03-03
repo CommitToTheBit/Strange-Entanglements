@@ -21,6 +21,7 @@ func _ready():
 		you = yous.front()
 	
 	quantum_state = get_node("QuantumState")
+	quantum_state.initialise(qubits.size())
 
 func _process(_delta):
 	if Input.is_action_just_pressed("ui_left"):

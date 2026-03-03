@@ -8,10 +8,10 @@
 // -----------------------------------------------------------------------------
 // Operations
 // -----------------------------------------------------------------------------
-const array<array<complex<float>, 2>, 2> StrangeQuantumState::kHadamard =
+const array<array<complex<double>, 2>, 2> StrangeQuantumState::kHadamard =
 {
-	complex<float>(cos(Math_PI / 4), 0.0),  complex<float>( sin(Math_PI / 4), 0.0),
-	complex<float>(sin(Math_PI / 4), 0.0),  complex<float>(-cos(Math_PI / 4), 0.0),
+	complex<double>(cos(Math_PI / 4), 0.0),  complex<double>( sin(Math_PI / 4), 0.0),
+	complex<double>(sin(Math_PI / 4), 0.0),  complex<double>(-cos(Math_PI / 4), 0.0),
 };
 
 // -----------------------------------------------------------------------------
@@ -19,7 +19,9 @@ const array<array<complex<float>, 2>, 2> StrangeQuantumState::kHadamard =
 // -----------------------------------------------------------------------------
 void StrangeQuantumState::_bind_methods()
 {
+	ClassDB::bind_method(D_METHOD("initialise"), &StrangeQuantumState::Initialise);
 
+	ClassDB::bind_method(D_METHOD("get_qubits"), &StrangeQuantumState::GetQubits);
 }
 
 // -----------------------------------------------------------------------------
@@ -28,4 +30,13 @@ void StrangeQuantumState::_bind_methods()
 void StrangeQuantumState::_ready()
 {
 	Node::_ready();
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::Initialise: Initialise quantum state with a fixed number
+// of qubits.
+// -----------------------------------------------------------------------------
+void StrangeQuantumState::Initialise(int qubits)
+{
+	mSuperposition = make_unique<StrangeSuperposition>(qubits);
 }
