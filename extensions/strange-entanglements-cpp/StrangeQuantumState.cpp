@@ -43,3 +43,17 @@ void StrangeQuantumState::Initialise(size_t qubits)
 	mSuperposition = make_unique<StrangeSuperposition>(qubits);
 	mSuperposition->mData[0] = complex<double>(1.0);
 }
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::Collapse: Collapse a superposition to a measurment.
+// -----------------------------------------------------------------------------
+unique_ptr<StrangeSuperposition> Collapse(StrangeSuperposition* superposition, size_t qubits_representation, size_t measurement_representation)
+{
+	unique_ptr<StrangeSuperposition> collapsed_superposition = make_unique<StrangeSuperposition>(superposition->mQubits);
+	for (size_t dimension = 0; dimension < superposition->mDimensions; ++dimension)
+	{
+		collapsed_superposition->mData[dimension] = dimension & qubits_representation == measurement_representation ? superposition->mData[dimension] : complex<double>(0.0);
+	}
+
+	return collapsed_superposition;
+}

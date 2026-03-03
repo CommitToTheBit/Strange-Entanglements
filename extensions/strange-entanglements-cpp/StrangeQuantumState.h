@@ -58,6 +58,18 @@ protected:
 	// Godot
 	// -------------------------------------------------------------------------
 	static void _bind_methods();
+
+private:
+	// -------------------------------------------------------------------------
+	// Operations
+	// -------------------------------------------------------------------------
+	static unique_ptr<StrangeSuperposition> Collapse(StrangeSuperposition* superposition,  size_t qubits_representation, size_t measurement_representation);
+
+	// -------------------------------------------------------------------------
+	// Accessors
+	// -------------------------------------------------------------------------
+	size_t GetQubitRepresentation(size_t qubit) const { return 1 << mSuperposition->mQubits - qubit - 1; }
+	size_t GetMeasurementRepresentation(size_t qubit, size_t measurement) const { return measurement << mSuperposition->mQubits - qubit - 1; }
 };
 
 #endif // STRANGE_QUANTUM_STATE_H
