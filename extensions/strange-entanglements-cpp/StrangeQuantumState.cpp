@@ -113,3 +113,25 @@ unique_ptr<StrangeSuperposition> StrangeQuantumState::ErrorCorrect(StrangeSuperp
 
 	return error_corrected_superposition;
 }
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::GetAllMeasurementRepresentations: Get all measurements
+// on a set of qubits.
+// -----------------------------------------------------------------------------
+vector<size_t> StrangeQuantumState::GetAllMeasurementRepresentations(size_t qubits_representation)
+{
+	vector<size_t> measurement_representations = { 0 };
+	for (size_t qubit_representation = 1; qubit_representation <= qubits_representation; qubit_representation <<= 1)
+	{
+		if (qubits_representation & qubit_representation)
+		{
+			size_t measurements = measurement_representations.size();
+			for (int measurement = 0; measurement < measurements; ++measurement)
+			{
+				measurement_representations.emplace_back(qubit_representation | measurement_representations[measurement]);
+			}
+		}
+	}
+
+	return measurement_representations;
+}

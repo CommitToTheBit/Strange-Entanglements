@@ -14,7 +14,7 @@ StrangeSuperposition::StrangeSuperposition(size_t qubits)
 // -----------------------------------------------------------------------------
 // StrangeSuperposition::operator==: Equality operator.
 // -----------------------------------------------------------------------------
-bool StrangeSuperposition::operator==(StrangeSuperposition const& other)
+bool StrangeSuperposition::operator==(StrangeSuperposition const& other) const
 {
 	if (mQubits == other.mQubits)
 	{
@@ -35,7 +35,7 @@ bool StrangeSuperposition::operator==(StrangeSuperposition const& other)
 // -----------------------------------------------------------------------------
 // StrangeSuperposition::IsNonzero: Returns true if any element is nonzero.
 // -----------------------------------------------------------------------------
-bool StrangeSuperposition::IsNonzero()
+bool StrangeSuperposition::IsNonzero() const
 {
 	for (size_t dimension = 0; dimension < mDimensions; ++dimension)
 	{

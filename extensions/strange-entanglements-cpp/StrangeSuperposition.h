@@ -28,12 +28,13 @@ public:
 	// -------------------------------------------------------------------------
 	// Operators
 	// -------------------------------------------------------------------------
-	bool operator==(StrangeSuperposition const& other);
+	bool operator==(StrangeSuperposition const& other) const;
+	bool operator!=(StrangeSuperposition const& other) const { return !(*this == other); }
 
 	// -------------------------------------------------------------------------
 	// Accessors
 	// -------------------------------------------------------------------------
-	bool IsNonzero();
+	bool IsNonzero() const;
 };
 
 #endif // STRANGE_SUPERPOSITION_H
