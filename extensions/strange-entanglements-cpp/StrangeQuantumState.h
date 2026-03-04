@@ -63,7 +63,9 @@ private:
 	// -------------------------------------------------------------------------
 	// Operations
 	// -------------------------------------------------------------------------
-	static unique_ptr<StrangeSuperposition> Collapse(StrangeSuperposition* superposition,  size_t qubits_representation, size_t measurement_representation);
+	static unique_ptr<StrangeSuperposition> Collapse(StrangeSuperposition const* superposition, size_t qubits_representation, size_t measurement_representation);
+	static unique_ptr<StrangeSuperposition> Normalise(StrangeSuperposition const* superposition);
+	static unique_ptr<StrangeSuperposition> ErrorCorrect(StrangeSuperposition const* superposition);
 
 	// -------------------------------------------------------------------------
 	// Accessors
