@@ -77,7 +77,7 @@ unique_ptr<StrangeSuperposition> StrangeQuantumState::Collapse(StrangeSuperposit
 	unique_ptr<StrangeSuperposition> collapsed_superposition = make_unique<StrangeSuperposition>(superposition->mQubits);
 	for (size_t dimension = 0; dimension < superposition->mDimensions; ++dimension)
 	{
-		collapsed_superposition->mData[dimension] = dimension & qubits_representation == measurement_representation ? superposition->mData[dimension] : 0.0;
+		collapsed_superposition->mData[dimension] = (dimension & qubits_representation) == measurement_representation ? superposition->mData[dimension] : 0.0;
 	}
 
 	return collapsed_superposition;
