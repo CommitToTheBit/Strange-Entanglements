@@ -47,3 +47,58 @@ bool StrangeSuperposition::IsNonzero() const
 
 	return false;
 }
+
+// ----------------------------------------------------------------------------
+// StrangeSuperposition::GetRepresentation: Print representation of a
+// superposition.
+// ----------------------------------------------------------------------------
+string StrangeSuperposition::GetRepresentation() const
+{
+	string representation = string{ };
+	for (size_t dimension = 0; dimension < mDimensions; ++dimension)
+	{
+		if (mData[dimension] != 0.0)
+		{
+			string coefficient = string{ };
+			if (mData[dimension].imag())
+			{
+				coefficient = "(" + to_string(mData[dimension].real()) + " + " + to_string(mData[dimension].imag()) + "i)";
+			}
+			else if (mData[dimension].real() == -1.0)
+			{
+				coefficient = "-";
+			}
+			else if (mData[dimension].real() != 1.0)
+			{
+				coefficient = to_string(mData[dimension].real());
+			}
+
+			representation.append(coefficient).append(GetDimensionRepresentation(dimension)).append(" + ");
+		}
+	}
+
+	return representation.length() ? representation.substr(0, representation.length() - 3) : "0";
+}
+
+// ----------------------------------------------------------------------------
+// StrangeSuperposition::GetDimensionRepresentation: Print representation of
+// a basis vector in a superposition.
+// ----------------------------------------------------------------------------
+string StrangeSuperposition::GetDimensionRepresentation(size_t dimension) const
+{
+    if (mQubits)
+    {
+		string dimension_representation = string{ };
+        for (int i = 0; i < mQubits; ++i)
+        {
+            dimension_representation = std::to_string(dimension & 1) + dimension_representation;
+            dimension >>= 1;
+        }
+
+		return "<" + dimension_representation + ">";
+    }
+    else
+    {
+    	return "<∅>";
+    }
+}

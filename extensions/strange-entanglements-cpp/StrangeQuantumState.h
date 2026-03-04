@@ -67,12 +67,11 @@ private:
 	static unique_ptr<StrangeSuperposition> Normalise(StrangeSuperposition const* superposition);
 	static unique_ptr<StrangeSuperposition> ErrorCorrect(StrangeSuperposition const* superposition);
 
-	// -------------------------------------------------------------------------
-	// Accessors
-	// -------------------------------------------------------------------------
-	size_t GetQubitRepresentation(size_t qubit) const { return 1 << mSuperposition->mQubits - qubit - 1; }
-	size_t GetMeasurementRepresentation(size_t qubit, size_t measurement) const { return measurement << mSuperposition->mQubits - qubit - 1; }
+	static unique_ptr<shared_ptr<StrangeSuperposition>[]> Factorise(StrangeSuperposition const* superposition);
 
+	// -------------------------------------------------------------------------
+	// Representation
+	// -------------------------------------------------------------------------
 	static vector<size_t> GetAllMeasurementRepresentations(size_t qubits_representation);
 };
 
