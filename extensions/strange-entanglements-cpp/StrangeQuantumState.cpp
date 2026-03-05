@@ -27,7 +27,9 @@ void StrangeQuantumState::_bind_methods()
 
 	ClassDB::bind_method(D_METHOD("get_qubits"), &StrangeQuantumState::GetQubits);
 	ClassDB::bind_method(D_METHOD("get_qubits_entangled_with"), &StrangeQuantumState::GetQubitsEntangledWith);
+
 	ClassDB::bind_method(D_METHOD("get_orbits_of"), &StrangeQuantumState::GetOrbitsOf);
+	ClassDB::bind_method(D_METHOD("get_basis_of"), &StrangeQuantumState::GetBasisOf);
 }
 
 // -----------------------------------------------------------------------------
@@ -368,8 +370,45 @@ PackedFloat64Array StrangeQuantumState::GetOrbitsOf(size_t qubit)
 
 			double orbit = 2.0 * atan2(y, x) - Math_PI / 2.0;
 			orbits.append(orbit);
+		}
+	}
 
-			UtilityFunctions::print("  * ", superposition->GetRepresentation().c_str(), " has orbit ", 180.0 * orbit / Math_PI);
+	return orbits;
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::GetBasisOf: Get basis entangled with a qubit.
+// -----------------------------------------------------------------------------
+PackedFloat64Array StrangeQuantumState::GetBasisOf(size_t qubit, size_t at)
+{
+	PackedInt32Array qubits = GetQubitsEntangledWith(qubit);
+	PackedFloat64Array orbits;
+
+	size_t qubits_representation = 0;
+	size_t at_representation = 0;
+
+	for (size_t i = 0; i < qubits.size(); ++i)
+	{
+		if (qubits[i] != qubit)
+		{
+			qubits_representation |= 1 << i;
+		}
+
+		if (qubits[i] == at)
+		{
+			at_representation = 1 << i;
+		}
+	}
+
+	vector<size_t> measurement_representations = GetAllMeasurementRepresentations(qubits_representation);
+	for (size_t measurement_representation : measurement_representations)
+	{
+		unique_ptr<StrangeSuperposition> superposition;
+		superposition = CollapseAndSimplify(mEntanglements[qubit].get(), qubits_representation, measurement_representation);
+		if (superposition->IsNonzero())
+		{
+			double orbit = (measurement_representation & at_representation) == 0 ? -Math_PI / 2 : Math_PI / 2;
+			orbits.append(orbit);
 		}
 	}
 

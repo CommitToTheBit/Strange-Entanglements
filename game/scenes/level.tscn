@@ -13,19 +13,15 @@ script = ExtResource("1_2q6dc")
 [node name="QuantumState" type="StrangeQuantumState" parent="." unique_id=1755032662]
 
 [node name="You" parent="." unique_id=1374794593 instance=ExtResource("4_mx8sn")]
-z_index = 1
 position = Vector2(224, 96)
 
 [node name="You2" parent="." unique_id=649580737 instance=ExtResource("4_mx8sn")]
-z_index = 1
 position = Vector2(224, 288)
 
 [node name="Qubit" parent="." unique_id=970844913 instance=ExtResource("2_w7c3h")]
-z_index = 1
 position = Vector2(96, 224)
 
 [node name="Qubit2" parent="." unique_id=611916212 instance=ExtResource("2_w7c3h")]
-z_index = 1
 position = Vector2(160, 96)
 
 [connection signal="state_changed" from="QuantumState" to="." method="_on_state_changed"]

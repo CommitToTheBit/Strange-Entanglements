@@ -28,5 +28,4 @@ func set_orbits(value : int):
 		qubit_orbits.append(qubit_orbit)
 
 func set_orbit(orbit : int, angle : float):
-	qubit_orbits[orbit].rotation = angle;
-	print(qubit_orbits[orbit].rotation_degrees)
+	qubit_orbits[orbit].rotation = angle

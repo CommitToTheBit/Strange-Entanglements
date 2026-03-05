@@ -58,6 +58,7 @@ public:
 
 	PackedInt32Array GetQubitsEntangledWith(size_t qubit);
 	PackedFloat64Array GetOrbitsOf(size_t qubit);
+	PackedFloat64Array GetBasisOf(size_t qubit, size_t at);
 
 	// -------------------------------------------------------------------------
 	// Accessors
