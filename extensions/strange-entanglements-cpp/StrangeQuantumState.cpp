@@ -207,8 +207,6 @@ unique_ptr<shared_ptr<StrangeSuperposition>[]> StrangeQuantumState::Factorise(St
 					collapsed_superposition = Normalise(collapsed_superposition.get());
 					collapsed_superposition = ErrorCorrect(collapsed_superposition.get());
 
-					UtilityFunctions::print("* measurement complement ", measurement_complement, ": ", collapsed_superposition->GetRepresentation().c_str());
-
 					if (collapsed_superposition->IsNonzero() && *collapsed_superposition != *factor_superposition)
 					{
 						factorisable = false;
@@ -220,15 +218,11 @@ unique_ptr<shared_ptr<StrangeSuperposition>[]> StrangeQuantumState::Factorise(St
 					factor_superposition = CollapseAndSimplify(superposition, qubits_complement, measurement_complement);
 					factor_superposition = Normalise(factor_superposition.get());
 					factor_superposition = ErrorCorrect(factor_superposition.get());
-
-					UtilityFunctions::print("* measurement complement ", measurement_complement, ": ", factor_superposition->GetRepresentation().c_str());
 				}
 			}
 
 			if (factorisable)
 			{
-				UtilityFunctions::print("* qubits representation ", qubits_representation, ": ", factor_superposition->GetRepresentation().c_str());
-
 				shared_ptr<StrangeSuperposition> shared_factor_superposition = make_shared<StrangeSuperposition>(factor_superposition->mQubits);
 				for (size_t dimension = 0; dimension < factor_superposition->mDimensions; ++dimension)
 				{
