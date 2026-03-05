@@ -48,6 +48,7 @@ void StrangeQuantumState::Initialise(size_t qubits)
 
 	mSuperposition = make_unique<StrangeSuperposition>(qubits);
 	mSuperposition->mData[0] = 1.0;
+	mSuperposition->mData[3] = 1.0;
 
 	mSuperposition = Normalise(mSuperposition.get());
 	mSuperposition = ErrorCorrect(mSuperposition.get());

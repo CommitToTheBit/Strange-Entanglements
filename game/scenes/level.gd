@@ -69,13 +69,16 @@ func _on_state_changed():
 	for qubit : Qubit  in qubits:
 		if qubit.dirty:
 			var qubits_entangled : PackedInt32Array = quantum_state.get_qubits_entangled_with(qubit.index)
-			for qubit_entangled in qubits_entangled:
-				qubits[qubit_entangled].dirty = false
-			
 			var orbits : PackedFloat64Array = quantum_state.get_orbits_of(qubit.index);
-			qubit.set_orbits(orbits.size())
-			for i in range(orbits.size()):
-				print("qubit ", qubit.index, " has ", i, "th orbit ", orbits[i]);
-				qubit.set_orbit(i, orbits[i])
+			var index : int = 0
 			
+			for qubit_entangled in qubits_entangled:
+				qubits[qubit_entangled].set_orbits(orbits.size())
+				if qubit_entangled == qubit.index:
+					for i in range(orbits.size()):
+						print("qubit ", qubit.index, " has ", i, "th orbit ", orbits[i]);
+						qubit.set_orbit(i, orbits[i])
+				else:
+					pass
+				qubits[qubit_entangled].dirty = false
 	print("")
