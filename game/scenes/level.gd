@@ -47,6 +47,13 @@ func move(direction : Vector2i):
 	you.position = adjacent_position
 	if adjacent_element:
 		adjacent_element.position = map_to_local(local_to_map(adjacent_element.position) + direction)
+		if adjacent_element is Qubit:
+			# ------------------------------------------------------------------
+			# FIXME: Extremely hard-coded transforms! Need to make them single-
+			# use, too...
+			# ------------------------------------------------------------------
+			if get_cell_alternative_tile(local_to_map(adjacent_element.position)) == 2:
+				quantum_state.do_hadamard(adjacent_element.index)
 
 func find_adjacent_element(position : Vector2):
 	for you in yous:
