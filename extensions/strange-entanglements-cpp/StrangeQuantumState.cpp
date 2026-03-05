@@ -40,6 +40,8 @@ void StrangeQuantumState::_ready()
 	for (size_t qubit = 0; qubit < mSuperposition->mQubits; ++qubit)
 	{
 		UtilityFunctions::print("* qubit ", qubit, " is entangled in ", GetQubitsEntangledWith(qubit), ": ", mEntanglements[qubit]->GetRepresentation().c_str());
+
+		GetOrbitsOf(qubit);
 	}
 	// -------------------------------------------------------------------------
 }
@@ -58,7 +60,7 @@ void StrangeQuantumState::Initialise(size_t qubits)
 	// -------------------------------------------------------------------------
 	// DEBUG:
 	// -------------------------------------------------------------------------
-	// mSuperposition->mData[1] = 1.0;
+	mSuperposition->mData[1] = 1.0;
 	// mSuperposition->mData[2] = 1.0;
 	// -------------------------------------------------------------------------
 	// mSuperposition->mData[3] = polar(1.0, Math_PI / 8);
@@ -268,7 +270,8 @@ vector<size_t> StrangeQuantumState::GetAllMeasurementRepresentations(size_t qubi
 }
 
 // -----------------------------------------------------------------------------
-// StrangeQuantumState::GetQubitsEntangledWith: Get 
+// StrangeQuantumState::GetQubitsEntangledWith: Get a set of entangled qubits,
+// including self.
 // -----------------------------------------------------------------------------
 PackedInt32Array StrangeQuantumState::GetQubitsEntangledWith(size_t qubit)
 {
@@ -282,4 +285,45 @@ PackedInt32Array StrangeQuantumState::GetQubitsEntangledWith(size_t qubit)
 	}
 
 	return qubits;
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::GetOrbitsOf: Get all orbits of a qubit, ordered by
+// indices in an entanglement.
+// -----------------------------------------------------------------------------
+PackedFloat64Array StrangeQuantumState::GetOrbitsOf(size_t qubit)
+{
+	PackedInt32Array qubits = GetQubitsEntangledWith(qubit);
+	PackedFloat64Array orbits;
+
+	size_t qubits_representation = 0;
+	for (size_t i = 0; i < qubits.size(); ++i)
+	{
+		if (qubits[i] != qubit)
+		{
+			qubits_representation |= 1 << i;
+		}
+	}
+
+	vector<size_t> measurement_representations = GetAllMeasurementRepresentations(qubits_representation);
+	for (size_t measurement_representation : measurement_representations)
+	{
+		unique_ptr<StrangeSuperposition> superposition;
+		superposition = CollapseAndSimplify(mEntanglements[qubit].get(), qubits_representation, measurement_representation);
+		if (superposition->IsNonzero())
+		{
+			superposition = Normalise(superposition.get());
+			superposition = ErrorCorrect(superposition.get());
+
+			double y = superposition->mData[1].real() ? superposition->mData[1].real() / abs(superposition->mData[1].real()) : 0.0;
+			double x = superposition->mData[0].real() ? superposition->mData[0].real() / abs(superposition->mData[0].real()) : 0.0;
+
+			double orbit = 2.0 * atan2(y, x) - Math_PI / 2.0;
+			orbits.append(orbit);
+
+			UtilityFunctions::print("  * ", superposition->GetRepresentation().c_str(), " has orbit ", 180.0 * orbit / Math_PI);
+		}
+	}
+
+	return orbits;
 }
