@@ -39,6 +39,10 @@ void StrangeQuantumState::_ready()
 	UtilityFunctions::print("superposition: ", mSuperposition->GetRepresentation().c_str());
 	// -------------------------------------------------------------------------
 	unique_ptr<shared_ptr<StrangeSuperposition>[]> factorised_superposition = Factorise(mSuperposition.get());
+	for (size_t qubit = 0; qubit < mSuperposition->mQubits; ++qubit)
+	{
+		UtilityFunctions::print("* qubit ", qubit, ": ", factorised_superposition[qubit]->GetRepresentation().c_str());
+	}
 	// -------------------------------------------------------------------------
 }
 
@@ -56,19 +60,20 @@ void StrangeQuantumState::Initialise(size_t qubits)
 	// -------------------------------------------------------------------------
 	// DEBUG:
 	// -------------------------------------------------------------------------
-	mSuperposition->mData[1] = 1.0;
-	mSuperposition->mData[2] = 1.0;
+	// mSuperposition->mData[1] = 1.0;
+	// mSuperposition->mData[2] = 1.0;
 	// -------------------------------------------------------------------------
 	mSuperposition->mData[3] = polar(1.0, Math_PI / 8);
 
 	mSuperposition = Normalise(mSuperposition.get());
 	mSuperposition = ErrorCorrect(mSuperposition.get());
 	// -------------------------------------------------------------------------
-	size_t qubit = 1;
-	size_t qubit_representation = mSuperposition->GetQubitRepresentation(qubit);
-	size_t measurement_representation = mSuperposition->GetMeasurementRepresentation(qubit, 1);
-	mSuperposition = Collapse(mSuperposition.get(), qubit_representation, measurement_representation);
-	mSuperposition = CollapseAndSimplify(mSuperposition.get(), qubit_representation, measurement_representation);
+	// size_t qubit = 1;
+	// size_t qubit_representation = mSuperposition->GetQubitRepresentation(qubit);
+	// size_t measurement_representation = mSuperposition->GetMeasurementRepresentation(qubit, 1);
+	// mSuperposition = Collapse(mSuperposition.get(), qubit_representation, measurement_representation);
+	// -------------------------------------------------------------------------
+	// mSuperposition = CollapseAndSimplify(mSuperposition.get(), qubit_representation, measurement_representation);
 	// -------------------------------------------------------------------------
 }
 
@@ -174,73 +179,76 @@ unique_ptr<shared_ptr<StrangeSuperposition>[]> StrangeQuantumState::Factorise(St
 	unique_ptr<shared_ptr<StrangeSuperposition>[]> factorised_superposition = make_unique<shared_ptr<StrangeSuperposition>[]>(superposition->mQubits);
 	memset(factorised_superposition.get(), 0, superposition->mQubits * sizeof(shared_ptr<StrangeSuperposition>));
 
+	vector<size_t> factors = { };
+	for (size_t qubits_representation = 1; qubits_representation < 1 << superposition->mQubits; ++qubits_representation)
+	{
+		bool factorisable = true;
+		for (size_t factor : factors)
+		{
+			if (qubits_representation & factor)
+			{
+				factorisable = false;
+				break;
+			}
+		}
+
+		if (factorisable)
+		{
+			unique_ptr<StrangeSuperposition> factor_superposition = nullptr;
+			
+			size_t qubits_complement = qubits_representation ^ (1 << superposition->mQubits) - 1;
+			vector<size_t> measurement_complements = GetAllMeasurementRepresentations(qubits_complement);
+			for (size_t measurement_complement : measurement_complements)
+			{
+				if (factor_superposition && factor_superposition->IsNonzero())
+				{
+					unique_ptr<StrangeSuperposition> collapsed_superposition;
+					collapsed_superposition = CollapseAndSimplify(superposition, qubits_complement, measurement_complement);
+					collapsed_superposition = Normalise(factor_superposition.get());
+					collapsed_superposition = ErrorCorrect(factor_superposition.get());
+
+					UtilityFunctions::print("* measurement complement ", measurement_complement, ": ", collapsed_superposition->GetRepresentation().c_str());
+
+					if (collapsed_superposition->IsNonzero() && *collapsed_superposition != *factor_superposition)
+					{
+						factorisable = false;
+						break;
+					}
+				}
+				else
+				{
+					factor_superposition = CollapseAndSimplify(superposition, qubits_complement, measurement_complement);
+					factor_superposition = Normalise(factor_superposition.get());
+					factor_superposition = ErrorCorrect(factor_superposition.get());
+
+					UtilityFunctions::print("* measurement complement ", measurement_complement, ": ", factor_superposition->GetRepresentation().c_str());
+				}
+			}
+
+			if (factorisable)
+			{
+				UtilityFunctions::print("* qubits representation ", qubits_representation, ": ", factor_superposition->GetRepresentation().c_str());
+
+				shared_ptr<StrangeSuperposition> shared_factor_superposition = make_shared<StrangeSuperposition>(factor_superposition->mQubits);
+				for (size_t dimension = 0; dimension < factor_superposition->mDimensions; ++dimension)
+				{
+					shared_factor_superposition->mData[dimension] = factor_superposition->mData[dimension];
+				}
+
+				for (size_t qubit = 0; qubit < superposition->mQubits; ++qubit)
+				{
+					if (superposition->GetQubitRepresentation(qubit) & qubits_representation)
+					{
+						factorised_superposition[qubit] = shared_factor_superposition;
+					}
+				}
+
+				factors.emplace_back(qubits_representation);
+			}
+		}
+	}
+
 	return factorised_superposition;
-
-	//for (size_t qubits_representation = 1; qubits < 1 << superposition->mQubits;)
-
-
-	/* std::set<int> factors = { };
-
-    for (int qubits = 1; qubits < 1 << mQubits; ++qubits)
-    {
-        bool factored_out = false;
-        for (int factor : factors)
-        {
-            if (factored_out = factor & qubits)
-            {
-                break;
-            }
-        }
-
-        bool is_factor = !factored_out;
-        if (is_factor)
-        {
-            int measurements = 1 << __popcnt(qubits);
-            vector<Vector2> complement = GetComplement(qubits, 0);
-            vector<Vector2> zeroes = vector<Vector2>(complement.size());
-
-            for (int measurement = 1; measurement < measurements; ++measurement)
-            {
-                if (complement == zeroes)
-                {
-                    complement = GetComplement(qubits, measurement);
-                }
-                else
-                {
-                    vector<Vector2> other = GetComplement(qubits, measurement);
-                    if (other != complement && other != zeroes)
-                    {
-                        is_factor = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (is_factor)
-        {
-            factors.emplace(qubits);
-        }
-    }
-
-    Array gdFactors;
-    for (auto iter = factors.begin(); iter != factors.end(); ++iter)
-    {
-        Array gdFactor;
-
-        int qubit = 0;
-        for (int factor = *iter; factor; factor >>= 1, ++qubit)
-        {
-            if (factor & 1)
-            {
-                gdFactor.push_front(qubit);
-            }
-        }
-
-        gdFactors.push_back(gdFactor);
-    }
-
-    return gdFactors; */
 }
 
 // -----------------------------------------------------------------------------
