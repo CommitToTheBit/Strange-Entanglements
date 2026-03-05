@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://c8nahcrl3dsso" path="res://scenes/qubit.gd" id="1_r62k6"]
 
 [node name="Qubit" type="Node2D" unique_id=970844913]
+z_index = 1
 script = ExtResource("1_r62k6")
 
 [node name="Box" type="Line2D" parent="." unique_id=721631857]

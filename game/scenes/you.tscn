@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cj7xcf6xilos8" path="res://scenes/you.gd" id="1_0hrdx"]
 
 [node name="You" type="Node2D" unique_id=649580737]
+z_index = 1
 script = ExtResource("1_0hrdx")
 
 [node name="Boundary" type="Line2D" parent="." unique_id=505984359]

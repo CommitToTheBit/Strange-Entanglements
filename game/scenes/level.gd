@@ -40,8 +40,6 @@ func _process(_delta):
 	if Input.is_action_just_pressed("ui_cycle_yous"):
 		if yous.size() > 1:
 			you = yous[(you.index + 1) % yous.size()]
-	
-	_on_state_changed()
 
 func move(direction : Vector2i):
 	var adjacent_position : Vector2 = map_to_local(local_to_map(you.position) + direction)
@@ -77,7 +75,7 @@ func _on_state_changed():
 			var orbits : PackedFloat64Array = quantum_state.get_orbits_of(qubit.index);
 			qubit.set_orbits(orbits.size())
 			for i in range(orbits.size()):
+				print("qubit ", qubit.index, " has ", i, "th orbit ", orbits[i]);
 				qubit.set_orbit(i, orbits[i])
 			
-			print("qubit ", qubit.index, " has orbits ", orbits);
 	print("")

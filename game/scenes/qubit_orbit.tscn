@@ -2,8 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cdmqvu6irbqkj" path="res://qubit_orbit.gd" id="1_1nigt"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1nigt"]
-
 [node name="Orbit" type="Line2D" unique_id=800854702]
 points = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 closed = true
@@ -17,8 +15,3 @@ polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
 [node name="Spacing" type="Polygon2D" parent="Phase" unique_id=2067199538]
 polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=922079966]
-position = Vector2(32, 0)
-scale = Vector2(32, 32)
-texture = SubResource("PlaceholderTexture2D_1nigt")

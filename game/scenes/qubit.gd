@@ -17,6 +17,7 @@ func _ready():
 func set_orbits(value : int):
 	for qubit_orbit in qubit_orbits:
 		remove_child(qubit_orbit)
+	qubit_orbits.clear()
 	
 	orbits = value
 	for radius in range(32.0, 0.0, -32.0 / value):
