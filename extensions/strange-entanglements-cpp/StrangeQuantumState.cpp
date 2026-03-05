@@ -38,6 +38,8 @@ void StrangeQuantumState::_ready()
 
 	UtilityFunctions::print("superposition: ", mSuperposition->GetRepresentation().c_str());
 	// -------------------------------------------------------------------------
+	unique_ptr<shared_ptr<StrangeSuperposition>[]> factorised_superposition = Factorise(mSuperposition.get());
+	// -------------------------------------------------------------------------
 }
 
 // -----------------------------------------------------------------------------
@@ -64,8 +66,9 @@ void StrangeQuantumState::Initialise(size_t qubits)
 	// -------------------------------------------------------------------------
 	size_t qubit = 1;
 	size_t qubit_representation = mSuperposition->GetQubitRepresentation(qubit);
-	size_t measurement_representation = mSuperposition->GetMeasurementRepresentation(qubit, 0);
+	size_t measurement_representation = mSuperposition->GetMeasurementRepresentation(qubit, 1);
 	mSuperposition = Collapse(mSuperposition.get(), qubit_representation, measurement_representation);
+	mSuperposition = CollapseAndSimplify(mSuperposition.get(), qubit_representation, measurement_representation);
 	// -------------------------------------------------------------------------
 }
 
@@ -81,6 +84,29 @@ unique_ptr<StrangeSuperposition> StrangeQuantumState::Collapse(StrangeSuperposit
 	}
 
 	return collapsed_superposition;
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::CollapseAndSimplify: Collapse a superposition to a
+// measurement, and remove those measured qubits.
+// -----------------------------------------------------------------------------
+unique_ptr<StrangeSuperposition> StrangeQuantumState::CollapseAndSimplify(StrangeSuperposition const* superposition, size_t qubits_representation, size_t measurement_representation)
+{
+	unique_ptr<StrangeSuperposition> collapsed_superposition = Collapse(superposition, qubits_representation, measurement_representation);
+
+	size_t qubits_collapsed = __popcnt(qubits_representation);
+	unique_ptr<StrangeSuperposition> simplified_superposition = make_unique<StrangeSuperposition>(collapsed_superposition->mQubits - qubits_collapsed);
+	
+	size_t simplified_dimension = 0;
+	for (size_t dimension = 0; dimension < collapsed_superposition->mDimensions; ++dimension)
+	{
+		if ((dimension & qubits_representation) == measurement_representation)
+		{
+			simplified_superposition->mData[simplified_dimension++] = collapsed_superposition->mData[dimension];
+		}
+	}
+
+	return simplified_superposition;
 }
 
 // -----------------------------------------------------------------------------
