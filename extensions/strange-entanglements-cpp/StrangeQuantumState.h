@@ -28,6 +28,7 @@ public:
 	// State
 	// -------------------------------------------------------------------------
 	unique_ptr<StrangeSuperposition> mSuperposition = nullptr;
+	unique_ptr<shared_ptr<StrangeSuperposition>[]> mEntanglements = nullptr;
 
 private:
 	// -------------------------------------------------------------------------
@@ -47,6 +48,11 @@ public:
 	// Initialisation
 	// -------------------------------------------------------------------------
 	void Initialise(size_t qubits);
+
+	// -------------------------------------------------------------------------
+	// Operations
+	// -------------------------------------------------------------------------
+	PackedInt32Array GetQubitsEntangledWith(size_t qubit);
 
 	// -------------------------------------------------------------------------
 	// Accessors

@@ -37,11 +37,9 @@ void StrangeQuantumState::_ready()
 	Initialise(2);
 
 	UtilityFunctions::print("superposition: ", mSuperposition->GetRepresentation().c_str());
-	// -------------------------------------------------------------------------
-	unique_ptr<shared_ptr<StrangeSuperposition>[]> factorised_superposition = Factorise(mSuperposition.get());
 	for (size_t qubit = 0; qubit < mSuperposition->mQubits; ++qubit)
 	{
-		UtilityFunctions::print("* qubit ", qubit, ": ", factorised_superposition[qubit]->GetRepresentation().c_str());
+		UtilityFunctions::print("* qubit ", qubit, " is entangled in ", GetQubitsEntangledWith(qubit), ": ", mEntanglements[qubit]->GetRepresentation().c_str());
 	}
 	// -------------------------------------------------------------------------
 }
@@ -63,7 +61,7 @@ void StrangeQuantumState::Initialise(size_t qubits)
 	// mSuperposition->mData[1] = 1.0;
 	// mSuperposition->mData[2] = 1.0;
 	// -------------------------------------------------------------------------
-	mSuperposition->mData[3] = polar(1.0, Math_PI / 8);
+	// mSuperposition->mData[3] = polar(1.0, Math_PI / 8);
 
 	mSuperposition = Normalise(mSuperposition.get());
 	mSuperposition = ErrorCorrect(mSuperposition.get());
@@ -75,6 +73,8 @@ void StrangeQuantumState::Initialise(size_t qubits)
 	// -------------------------------------------------------------------------
 	// mSuperposition = CollapseAndSimplify(mSuperposition.get(), qubit_representation, measurement_representation);
 	// -------------------------------------------------------------------------
+
+	mEntanglements = Factorise(mSuperposition.get());
 }
 
 // -----------------------------------------------------------------------------
@@ -265,4 +265,21 @@ vector<size_t> StrangeQuantumState::GetAllMeasurementRepresentations(size_t qubi
 	}
 
 	return measurement_representations;
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::GetQubitsEntangledWith: Get 
+// -----------------------------------------------------------------------------
+PackedInt32Array StrangeQuantumState::GetQubitsEntangledWith(size_t qubit)
+{
+	PackedInt32Array qubits;
+	for (size_t i = 0; i < mSuperposition->mQubits; ++i)
+	{
+		if (mEntanglements[i] == mEntanglements[qubit])
+		{
+			qubits.append(i);
+		}
+	}
+
+	return qubits;
 }
