@@ -204,8 +204,8 @@ unique_ptr<shared_ptr<StrangeSuperposition>[]> StrangeQuantumState::Factorise(St
 				{
 					unique_ptr<StrangeSuperposition> collapsed_superposition;
 					collapsed_superposition = CollapseAndSimplify(superposition, qubits_complement, measurement_complement);
-					collapsed_superposition = Normalise(factor_superposition.get());
-					collapsed_superposition = ErrorCorrect(factor_superposition.get());
+					collapsed_superposition = Normalise(collapsed_superposition.get());
+					collapsed_superposition = ErrorCorrect(collapsed_superposition.get());
 
 					UtilityFunctions::print("* measurement complement ", measurement_complement, ": ", collapsed_superposition->GetRepresentation().c_str());
 
