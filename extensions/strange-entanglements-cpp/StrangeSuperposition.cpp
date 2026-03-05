@@ -62,7 +62,7 @@ string StrangeSuperposition::GetRepresentation() const
 			string coefficient = string{ };
 			if (mData[dimension].imag())
 			{
-				coefficient = "(" + to_string(mData[dimension].real()) + " + " + to_string(mData[dimension].imag()) + "i)";
+				coefficient = "(" + to_string(mData[dimension].real()).substr(0, 5) + " + " + to_string(mData[dimension].imag()).substr(0, 5) + "i)";
 			}
 			else if (mData[dimension].real() == -1.0)
 			{
@@ -70,7 +70,7 @@ string StrangeSuperposition::GetRepresentation() const
 			}
 			else if (mData[dimension].real() != 1.0)
 			{
-				coefficient = to_string(mData[dimension].real());
+				coefficient = to_string(mData[dimension].real()).substr(0, 5);
 			}
 
 			representation.append(coefficient).append(GetDimensionRepresentation(dimension)).append(" + ");
