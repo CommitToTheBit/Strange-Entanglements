@@ -22,6 +22,8 @@ void StrangeQuantumState::_bind_methods()
 	ClassDB::bind_method(D_METHOD("initialise"), &StrangeQuantumState::Initialise);
 
 	ClassDB::bind_method(D_METHOD("get_qubits"), &StrangeQuantumState::GetQubits);
+	ClassDB::bind_method(D_METHOD("get_qubits_entangled_with"), &StrangeQuantumState::GetQubitsEntangledWith);
+	ClassDB::bind_method(D_METHOD("get_orbits_of"), &StrangeQuantumState::GetOrbitsOf);
 }
 
 // -----------------------------------------------------------------------------
