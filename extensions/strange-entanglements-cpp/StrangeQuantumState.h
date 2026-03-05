@@ -52,6 +52,10 @@ public:
 	// -------------------------------------------------------------------------
 	// Operations
 	// -------------------------------------------------------------------------
+	void DoHadamard(int qubit) { DoSingleQubitOperation(kHadamard, qubit); }
+
+	void DoSingleQubitOperation(array<array<complex<double>, 2>, 2> const& operation, int qubit);
+
 	PackedInt32Array GetQubitsEntangledWith(size_t qubit);
 	PackedFloat64Array GetOrbitsOf(size_t qubit);
 
@@ -70,6 +74,8 @@ private:
 	// -------------------------------------------------------------------------
 	// Operations
 	// -------------------------------------------------------------------------
+	static unique_ptr<StrangeSuperposition> DoSingleQubitOperation(StrangeSuperposition const* superposition, array<array<complex<double>, 2>, 2> const& operation, int qubit);
+
 	static unique_ptr<StrangeSuperposition> Collapse(StrangeSuperposition const* superposition, size_t qubits_representation, size_t measurement_representation);
 	static unique_ptr<StrangeSuperposition> CollapseAndSimplify(StrangeSuperposition const* superposition, size_t qubits_representation, size_t measurement_representation);
 

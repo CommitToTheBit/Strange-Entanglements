@@ -9,6 +9,8 @@ var qubit_orbits : Array
 var index : int
 var orbits : int
 
+var dirty : bool = false
+
 func _ready():
 	packed_qubit_orbit = load("res://scenes/qubit_orbit.tscn")
 
@@ -24,5 +26,6 @@ func set_orbits(value : int):
 		qubit_orbit.set_radius(radius)
 		qubit_orbits.append(qubit_orbit)
 
-func set_orbit(orbit : int, superposition : PackedVector2Array):
-	qubit_orbits[orbit].rotation = Vector2(superposition[1].x, superposition[0].x).angle();
+func set_orbit(orbit : int, angle : float):
+	qubit_orbits[orbit].rotation = angle;
+	print(qubit_orbits[orbit].rotation_degrees)

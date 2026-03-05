@@ -19,7 +19,11 @@ const array<array<complex<double>, 2>, 2> StrangeQuantumState::kHadamard =
 // -----------------------------------------------------------------------------
 void StrangeQuantumState::_bind_methods()
 {
+	ADD_SIGNAL(MethodInfo("state_changed"));
+
 	ClassDB::bind_method(D_METHOD("initialise"), &StrangeQuantumState::Initialise);
+
+	ClassDB::bind_method(D_METHOD("do_hadamard"), &StrangeQuantumState::DoHadamard);
 
 	ClassDB::bind_method(D_METHOD("get_qubits"), &StrangeQuantumState::GetQubits);
 	ClassDB::bind_method(D_METHOD("get_qubits_entangled_with"), &StrangeQuantumState::GetQubitsEntangledWith);
@@ -32,20 +36,6 @@ void StrangeQuantumState::_bind_methods()
 void StrangeQuantumState::_ready()
 {
 	Node::_ready();
-
-	// -------------------------------------------------------------------------
-	// DEBUG:
-	// -------------------------------------------------------------------------
-	Initialise(2);
-
-	UtilityFunctions::print("superposition: ", mSuperposition->GetRepresentation().c_str());
-	for (size_t qubit = 0; qubit < mSuperposition->mQubits; ++qubit)
-	{
-		UtilityFunctions::print("* qubit ", qubit, " is entangled in ", GetQubitsEntangledWith(qubit), ": ", mEntanglements[qubit]->GetRepresentation().c_str());
-
-		GetOrbitsOf(qubit);
-	}
-	// -------------------------------------------------------------------------
 }
 
 // -----------------------------------------------------------------------------
@@ -59,26 +49,81 @@ void StrangeQuantumState::Initialise(size_t qubits)
 	mSuperposition = make_unique<StrangeSuperposition>(qubits);
 	mSuperposition->mData[0] = 1.0;
 
-	// -------------------------------------------------------------------------
-	// DEBUG:
-	// -------------------------------------------------------------------------
-	mSuperposition->mData[1] = 1.0;
-	// mSuperposition->mData[2] = 1.0;
-	// -------------------------------------------------------------------------
-	// mSuperposition->mData[3] = polar(1.0, Math_PI / 8);
-
 	mSuperposition = Normalise(mSuperposition.get());
 	mSuperposition = ErrorCorrect(mSuperposition.get());
-	// -------------------------------------------------------------------------
-	// size_t qubit = 1;
-	// size_t qubit_representation = mSuperposition->GetQubitRepresentation(qubit);
-	// size_t measurement_representation = mSuperposition->GetMeasurementRepresentation(qubit, 1);
-	// mSuperposition = Collapse(mSuperposition.get(), qubit_representation, measurement_representation);
-	// -------------------------------------------------------------------------
-	// mSuperposition = CollapseAndSimplify(mSuperposition.get(), qubit_representation, measurement_representation);
-	// -------------------------------------------------------------------------
 
 	mEntanglements = Factorise(mSuperposition.get());
+
+	// -------------------------------------------------------------------------
+	// DEBUG: Print state before emitting "state_changed" signal...
+	// -------------------------------------------------------------------------
+	UtilityFunctions::print("superposition: ", mSuperposition->GetRepresentation().c_str());
+	for (size_t qubit = 0; qubit < mSuperposition->mQubits; ++qubit)
+	{
+		UtilityFunctions::print("* qubit ", qubit, " is entangled in ", GetQubitsEntangledWith(qubit), ": ", mEntanglements[qubit]->GetRepresentation().c_str());
+
+		GetOrbitsOf(qubit);
+	}
+	UtilityFunctions::print("");
+	// -------------------------------------------------------------------------
+
+	emit_signal("state_changed");
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::DoSingleQubitOperation: Do a single-qubit operation.
+// -----------------------------------------------------------------------------
+void StrangeQuantumState::DoSingleQubitOperation(array<array<complex<double>, 2>, 2> const& operation, int qubit)
+{
+	mSuperposition = DoSingleQubitOperation(mSuperposition.get(), operation, qubit);
+	mSuperposition = Normalise(mSuperposition.get());
+	mSuperposition = ErrorCorrect(mSuperposition.get());
+
+	mEntanglements = Factorise(mSuperposition.get());
+
+	// -------------------------------------------------------------------------
+	// DEBUG: Print state before emitting "state_changed" signal...
+	// -------------------------------------------------------------------------
+	UtilityFunctions::print("superposition: ", mSuperposition->GetRepresentation().c_str());
+	for (size_t qubit = 0; qubit < mSuperposition->mQubits; ++qubit)
+	{
+		UtilityFunctions::print("* qubit ", qubit, " is entangled in ", GetQubitsEntangledWith(qubit), ": ", mEntanglements[qubit]->GetRepresentation().c_str());
+
+		GetOrbitsOf(qubit);
+	}
+	UtilityFunctions::print("");
+	// -------------------------------------------------------------------------
+
+	emit_signal("state_changed");
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::DoSingleQubitOperation: Do a single-qubit operation on a
+// superposition.
+// -----------------------------------------------------------------------------
+unique_ptr<StrangeSuperposition> StrangeQuantumState::DoSingleQubitOperation(StrangeSuperposition const* superposition, array<array<complex<double>, 2>, 2> const& operation, int qubit)
+{
+	unique_ptr<StrangeSuperposition> transformed_superposition = make_unique<StrangeSuperposition>(superposition->mQubits);
+
+	size_t qubit_representation = superposition->GetQubitRepresentation(qubit);
+	for (size_t dimension = 0; dimension < superposition->mDimensions; ++dimension)
+	{
+		if (superposition->mData[dimension] != 0.0)
+		{
+			// -----------------------------------------------------------------
+			// FIXME: Early implementation: not stress tested, yet to be tidied!
+			// -----------------------------------------------------------------
+			int representation = (dimension | qubit_representation) ^ qubit_representation;
+			int row = bool{dimension & qubit_representation}; 
+			for (int i = 0; i < 2; ++i)
+			{
+				int index = representation + i * qubit_representation;
+				transformed_superposition->mData[index] += operation[row][i] * superposition->mData[dimension];
+			}
+		}
+	}
+
+	return transformed_superposition;
 }
 
 // -----------------------------------------------------------------------------

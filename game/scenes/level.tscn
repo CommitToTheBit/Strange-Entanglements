@@ -27,3 +27,5 @@ position = Vector2(96, 224)
 [node name="Qubit2" parent="." unique_id=611916212 instance=ExtResource("2_w7c3h")]
 z_index = 1
 position = Vector2(160, 96)
+
+[connection signal="state_changed" from="QuantumState" to="." method="_on_state_changed"]

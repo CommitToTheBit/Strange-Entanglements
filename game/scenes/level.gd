@@ -22,6 +22,11 @@ func _ready():
 	
 	quantum_state = get_node("QuantumState")
 	quantum_state.initialise(qubits.size())
+	
+	# --------------------------------------------------------------------------
+	# DEBUG
+	# --------------------------------------------------------------------------
+	quantum_state.do_hadamard(0)
 
 func _process(_delta):
 	if Input.is_action_just_pressed("ui_left"):
@@ -35,6 +40,8 @@ func _process(_delta):
 	if Input.is_action_just_pressed("ui_cycle_yous"):
 		if yous.size() > 1:
 			you = yous[(you.index + 1) % yous.size()]
+	
+	_on_state_changed()
 
 func move(direction : Vector2i):
 	var adjacent_position : Vector2 = map_to_local(local_to_map(you.position) + direction)
@@ -56,3 +63,21 @@ func find_adjacent_element(position : Vector2):
 		if qubit.position == position:
 			return qubit
 	return null
+
+func _on_state_changed():
+	for qubit : Qubit in qubits:
+		qubit.dirty = true
+	
+	for qubit : Qubit  in qubits:
+		if qubit.dirty:
+			var qubits_entangled : PackedInt32Array = quantum_state.get_qubits_entangled_with(qubit.index)
+			for qubit_entangled in qubits_entangled:
+				qubits[qubit_entangled].dirty = false
+			
+			var orbits : PackedFloat64Array = quantum_state.get_orbits_of(qubit.index);
+			qubit.set_orbits(orbits.size())
+			for i in range(orbits.size()):
+				qubit.set_orbit(i, orbits[i])
+			
+			print("qubit ", qubit.index, " has orbits ", orbits);
+	print("")
