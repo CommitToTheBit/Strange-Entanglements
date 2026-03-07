@@ -37,6 +37,7 @@ private:
 	// Operations
 	// -------------------------------------------------------------------------
 	static const array<array<complex<double>, 2>, 2> kHadamard;
+	static const array<array<complex<double>, 2>, 2> kNot;
 
 public:
 	// -------------------------------------------------------------------------
@@ -53,8 +54,12 @@ public:
 	// Operations
 	// -------------------------------------------------------------------------
 	void DoHadamard(int qubit) { DoSingleQubitOperation(kHadamard, qubit); }
+	void DoNot(int qubit)      { DoSingleQubitOperation(kNot, qubit); }
+	
+	void DoCNot(int target_qubit, int control_qubit, int control_bit) { DoControlledOperation(kNot, target_qubit, control_qubit, control_bit); }
 
 	void DoSingleQubitOperation(array<array<complex<double>, 2>, 2> const& operation, int qubit);
+	void DoControlledOperation (array<array<complex<double>, 2>, 2> const& operation, int target_qubit, int control_qubit, int control_bit);
 
 	PackedInt32Array GetQubitsEntangledWith(size_t qubit);
 	PackedFloat64Array GetOrbitsOf(size_t qubit);
@@ -76,6 +81,7 @@ private:
 	// Operations
 	// -------------------------------------------------------------------------
 	static unique_ptr<StrangeSuperposition> DoSingleQubitOperation(StrangeSuperposition const* superposition, array<array<complex<double>, 2>, 2> const& operation, int qubit);
+	static unique_ptr<StrangeSuperposition> DoControlledOperation (StrangeSuperposition const* superposition, array<array<complex<double>, 2>, 2> const& operation, int target_qubit, int control_qubit, int control_bit);
 
 	static unique_ptr<StrangeSuperposition> Collapse(StrangeSuperposition const* superposition, size_t qubits_representation, size_t measurement_representation);
 	static unique_ptr<StrangeSuperposition> CollapseAndSimplify(StrangeSuperposition const* superposition, size_t qubits_representation, size_t measurement_representation);

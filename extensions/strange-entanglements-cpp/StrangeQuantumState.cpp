@@ -10,8 +10,14 @@
 // -----------------------------------------------------------------------------
 const array<array<complex<double>, 2>, 2> StrangeQuantumState::kHadamard =
 {
-	cos(Math_PI / 4),   sin(Math_PI / 4),
-	sin(Math_PI / 4),  -cos(Math_PI / 4),
+	cos(Math_PI / 4.0),   sin(Math_PI / 4.0),
+	sin(Math_PI / 4.0),  -cos(Math_PI / 4.0),
+};
+
+const array<array<complex<double>, 2>, 2> StrangeQuantumState::kNot =
+{
+	cos(Math_PI / 2.0),   sin(Math_PI / 2.0),
+	sin(Math_PI / 2.0),  -cos(Math_PI / 2.0),
 };
 
 // -----------------------------------------------------------------------------
@@ -24,6 +30,8 @@ void StrangeQuantumState::_bind_methods()
 	ClassDB::bind_method(D_METHOD("initialise"), &StrangeQuantumState::Initialise);
 
 	ClassDB::bind_method(D_METHOD("do_hadamard"), &StrangeQuantumState::DoHadamard);
+	ClassDB::bind_method(D_METHOD("do_not"), &StrangeQuantumState::DoNot);
+	ClassDB::bind_method(D_METHOD("do_cnot"), &StrangeQuantumState::DoCNot);
 
 	ClassDB::bind_method(D_METHOD("get_qubits"), &StrangeQuantumState::GetQubits);
 	ClassDB::bind_method(D_METHOD("get_qubits_entangled_with"), &StrangeQuantumState::GetQubitsEntangledWith);
@@ -122,6 +130,72 @@ unique_ptr<StrangeSuperposition> StrangeQuantumState::DoSingleQubitOperation(Str
 			{
 				int index = representation + i * qubit_representation;
 				transformed_superposition->mData[index] += operation[row][i] * superposition->mData[dimension];
+			}
+		}
+	}
+
+	return transformed_superposition;
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::DoSingleQubitOperation: Do a controlled operation.
+// -----------------------------------------------------------------------------
+void StrangeQuantumState::DoControlledOperation(array<array<complex<double>, 2>, 2> const& operation, int target_qubit, int control_qubit, int control_bit)
+{
+	mSuperposition = DoControlledOperation(mSuperposition.get(), operation, target_qubit, control_qubit, control_bit);
+	mSuperposition = Normalise(mSuperposition.get());
+	mSuperposition = ErrorCorrect(mSuperposition.get());
+
+	mEntanglements = Factorise(mSuperposition.get());
+
+	// -------------------------------------------------------------------------
+	// DEBUG: Print state before emitting "state_changed" signal...
+	// -------------------------------------------------------------------------
+	UtilityFunctions::print("superposition: ", mSuperposition->GetRepresentation().c_str());
+	for (size_t qubit = 0; qubit < mSuperposition->mQubits; ++qubit)
+	{
+		UtilityFunctions::print("* qubit ", qubit, " is entangled in ", GetQubitsEntangledWith(qubit), ": ", mEntanglements[qubit]->GetRepresentation().c_str());
+
+		GetOrbitsOf(qubit);
+	}
+	UtilityFunctions::print("");
+	// -------------------------------------------------------------------------
+
+	emit_signal("state_changed");
+}
+
+// -----------------------------------------------------------------------------
+// StrangeQuantumState::DoSingleQubitOperation: Do a controlled operation on a
+// superposition.
+// -----------------------------------------------------------------------------
+unique_ptr<StrangeSuperposition> StrangeQuantumState::DoControlledOperation(StrangeSuperposition const* superposition, array<array<complex<double>, 2>, 2> const& operation, int target_qubit, int control_qubit, int control_bit)
+{
+	unique_ptr<StrangeSuperposition> transformed_superposition = make_unique<StrangeSuperposition>(superposition->mQubits);
+
+	size_t target_qubit_representation = superposition->GetQubitRepresentation(target_qubit);
+	size_t control_qubit_representation = superposition->GetQubitRepresentation(control_qubit);
+	size_t control_bit_representation = superposition->GetMeasurementRepresentation(control_qubit, control_bit);
+
+	for (size_t dimension = 0; dimension < superposition->mDimensions; ++dimension)
+	{
+		if (superposition->mData[dimension] != 0.0)
+		{
+			// -----------------------------------------------------------------
+			// FIXME: Early implementation: not stress tested, yet to be tidied!
+			// -----------------------------------------------------------------
+			if ((dimension & control_qubit_representation) == control_bit_representation)
+			{
+				int representation = (dimension | target_qubit_representation) ^ target_qubit_representation;
+				int row = bool{dimension & target_qubit_representation}; 
+				for (int i = 0; i < 2; ++i)
+				{
+					int index = representation + i * target_qubit_representation;
+					transformed_superposition->mData[index] += operation[row][i] * superposition->mData[dimension];
+				}
+			}
+			else
+			{
+				transformed_superposition->mData[dimension] = superposition->mData[dimension];
 			}
 		}
 	}
