@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://0j21fqqkeexu"]
+[gd_scene format=3 uid="uid://cme5gcc34qk4u"]
 
-[node name="Hadamard" type="Line2D" unique_id=1374794593]
+[node name="CPositive" type="Line2D" unique_id=1374794593]
 points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 closed = true
 width = 8.0
@@ -15,6 +15,6 @@ offset_right = 32.0
 offset_bottom = 33.5
 theme_override_colors/font_color = Color(1, 0, 1, 1)
 theme_override_font_sizes/font_size = 48
-text = "H"
+text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1

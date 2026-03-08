@@ -54,6 +54,8 @@ func move(direction : Vector2i):
 			# ------------------------------------------------------------------
 			if get_cell_alternative_tile(local_to_map(adjacent_element.position)) == 2:
 				quantum_state.do_hadamard(adjacent_element.index)
+			elif get_cell_alternative_tile(local_to_map(adjacent_element.position)) == 3:
+				quantum_state.do_not(adjacent_element.index)
 
 func find_adjacent_element(position : Vector2):
 	for you in yous:
